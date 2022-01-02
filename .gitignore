@@ -37,3 +37,6 @@ x64/*
 Assets/*
 3rdParty/*
 .vs/*
+*.sln
+*.vcxproj
+*.vcxproj.*
