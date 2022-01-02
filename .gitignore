@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+Debug/*
+Release/*
+x64/*
+Assets/*
+3rdParty/*
+.vs/*
