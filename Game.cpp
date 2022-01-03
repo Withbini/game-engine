@@ -1,8 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "Game.hpp"
 #include "SDL_image.h"
 #include "SpriteComponent.hpp"
 
-<<<<<<< HEAD
 Game::Game()
 	: mWindow(nullptr)
 	, mRenderer(nullptr)
@@ -11,8 +11,6 @@ Game::Game()
 {
 }
 
-=======
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
 bool Game::Initialize()
 {
 	const int sdlResult = SDL_Init(SDL_INIT_VIDEO);
@@ -34,13 +32,13 @@ bool Game::Initialize()
 		return false;
 	}
 
-	//img
+	if (IMG_Init(IMG_INIT_PNG) == 0)
+	{
+		SDL_Log("Unable to initialize SDL_image: %s", SDL_GetError());
+		return false;
+	}
 	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
-<<<<<<< HEAD
 	LoadData();
-=======
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
-
 	mTicksCount = SDL_GetTicks();
 
 	return true;
@@ -63,10 +61,6 @@ void Game::Shutdown()
 	SDL_DestroyRenderer(mRenderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
-<<<<<<< HEAD
-=======
-
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
 }
 
 void Game::AddActor(Actor* actor)
@@ -83,29 +77,19 @@ void Game::AddActor(Actor* actor)
 
 void Game::RemoveActor(Actor* actor)
 {
-	auto act = std::find(mActors.begin(), mActors.end(), actor);
-	if (act != mActors.end())
-<<<<<<< HEAD
+	auto iter = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
+	if (iter != mPendingActors.end())
 	{
-		//mActors.erase(act);
-		std::iter_swap(act, mPendingActors.end() - 1);
+		std::iter_swap(iter, mPendingActors.end() - 1);
 		mPendingActors.pop_back();
 	}
 
-	act = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
-	if (act != mPendingActors.end())
+	iter = std::find(mActors.begin(), mActors.end(), actor);
+	if (iter != mActors.end())
 	{
-		//mPendingActors.erase(act);
-		std::iter_swap(act, mActors.end() - 1);
+		std::iter_swap(iter, mActors.end() - 1);
 		mActors.pop_back();
 	}
-=======
-		mActors.erase(act);
-
-	act = std::find(mPendingActors.begin(), mPendingActors.end(), actor);
-	if (act != mPendingActors.end())
-		mPendingActors.erase(act);
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
 }
 
 void Game::ProcessInput()
@@ -169,14 +153,10 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-<<<<<<< HEAD
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 255, 255);
-=======
 	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
 	SDL_RenderClear(mRenderer);
 
-	for(auto&sprite: mSprites)
+	for(auto sprite: mSprites)
 	{
 		sprite->Draw(mRenderer);
 	}
@@ -204,9 +184,11 @@ void Game::UnloadData()
 
 SDL_Texture* Game::LoadTexture(const std::string& fileName) const
 {
+	auto *fp= fopen(fileName.c_str(),"r");
 	SDL_Surface* surface = IMG_Load(fileName.c_str());
 	if (!surface)
 	{
+		SDL_Log("%s", SDL_GetError());
 		SDL_Log("Failed to load texture file %s", fileName.c_str());
 		return nullptr;
 	}
@@ -223,22 +205,13 @@ SDL_Texture* Game::LoadTexture(const std::string& fileName) const
 
 SDL_Texture* Game::GetTexture(const std::string& fileName)
 {
-<<<<<<< HEAD
 	auto textureFromFile = mTextures.find(fileName);
-	if (textureFromFile == mTextures.end())
-=======
-	auto iter = mTextures.find(fileName.c_str());
-	if (iter == mTextures.end())
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
-	{
+	if (textureFromFile == mTextures.end()){
 		auto* texture = LoadTexture(fileName);
 		mTextures.insert({ fileName, texture });
+		return texture;
 	}
-<<<<<<< HEAD
 	return textureFromFile->second;
-=======
-	return iter->second;
->>>>>>> f3b02b0f031eb1b6202f2d404ef56fb3eff677c6
 }
 
 void Game::AddSprite(SpriteComponent* sprite)
@@ -258,8 +231,5 @@ void Game::AddSprite(SpriteComponent* sprite)
 void Game::RemoveSprite(SpriteComponent* sprite)
 {
 	auto delSprite = std::find(mSprites.begin(), mSprites.end(), sprite);
-	if(delSprite!=mSprites.end())
-	{
-		mSprites.erase(delSprite);
-	}
+	mSprites.erase(delSprite);
 }

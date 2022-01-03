@@ -33,7 +33,7 @@ void Actor::Update(float deltaTime)
 
 void Actor::UpdateComponents(float deltaTime)
 {
-	for (auto *comp : mComponents)
+	for (auto comp : mComponents)
 	{
 		comp->Update(deltaTime);
 	}

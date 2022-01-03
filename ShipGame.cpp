@@ -32,3 +32,10 @@ void ShipGame::LoadData()
 	bg->SetBGTextures(bgtexs);
 	bg->SetScrollSpeed(-200.0f);
 }
+
+void ShipGame::ProcessInput()
+{
+	Game::ProcessInput();
+	const Uint8* state = SDL_GetKeyboardState(nullptr);
+	mShip->ProcessKeyboard(state);
+}

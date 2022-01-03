@@ -5,8 +5,10 @@ class ShipGame:public Game
 {
 public:
 	ShipGame():Game(),mShip(nullptr){}
-	~ShipGame() = default;
+	~ShipGame() override= default;
 	void LoadData() override;
+
+	void ProcessInput() override;
 private:
 	class Ship* mShip;
 };
