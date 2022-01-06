@@ -38,5 +38,3 @@ Assets/*
 3rdParty/*
 .vs/*
 *.sln
-*.vcxproj
-*.vcxproj.*
