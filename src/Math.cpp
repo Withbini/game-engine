@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------
 
 #include "Math.hpp"
-//#include "Vector.hpp"
 
 const Vector2 Vector2::Zero(0.0f, 0.0f);
 const Vector2 Vector2::UnitX(1.0f, 0.0f);

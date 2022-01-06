@@ -18,6 +18,43 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="example\Asteroid.cpp" />
+    <ClCompile Include="example\AsteroidGame.cpp" />
+    <ClCompile Include="example\Ship.cpp" />
+    <ClCompile Include="example\Ship2.cpp" />
+    <ClCompile Include="example\ShipGame.cpp" />
+    <ClCompile Include="src\Actor.cpp" />
+    <ClCompile Include="src\AnimSpriteComponent.cpp" />
+    <ClCompile Include="src\AniSpriteComponent.cpp" />
+    <ClCompile Include="src\BGSpriteComponent.cpp" />
+    <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\InputComponent.cpp" />
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\MoveComponent.cpp" />
+    <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\SpriteComponent.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="example\Asteroid.hpp" />
+    <ClInclude Include="example\AsteroidGame.hpp" />
+    <ClInclude Include="example\Ship.hpp" />
+    <ClInclude Include="example\Ship2.hpp" />
+    <ClInclude Include="example\ShipGame.hpp" />
+    <ClInclude Include="src\Actor.hpp" />
+    <ClInclude Include="src\AnimSpriteComponent.hpp" />
+    <ClInclude Include="src\AniSpriteComponent.hpp" />
+    <ClInclude Include="src\BGSpriteComponent.hpp" />
+    <ClInclude Include="src\Component.hpp" />
+    <ClInclude Include="src\Game.hpp" />
+    <ClInclude Include="src\InputComponent.hpp" />
+    <ClInclude Include="src\Math.hpp" />
+    <ClInclude Include="src\MoveComponent.hpp" />
+    <ClInclude Include="src\Random.hpp" />
+    <ClInclude Include="src\SpriteComponent.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{4930110B-CF50-4404-90E4-4A2323E7B57B}</ProjectGuid>
@@ -69,7 +106,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>$(IncludePath)</IncludePath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -90,7 +132,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -124,7 +166,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,29 +176,6 @@
       <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="AnimSpriteComponent.cpp" />
-    <ClCompile Include="BGSpriteComponent.cpp" />
-    <ClCompile Include="Component.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Ship.cpp" />
-    <ClCompile Include="ShipGame.cpp" />
-    <ClCompile Include="SpriteComponent.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Actor.hpp" />
-    <ClInclude Include="AnimSpriteComponent.hpp" />
-    <ClInclude Include="BGSpriteComponent.hpp" />
-    <ClInclude Include="Component.hpp" />
-    <ClInclude Include="Game.hpp" />
-    <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Ship.hpp" />
-    <ClInclude Include="ShipGame.hpp" />
-    <ClInclude Include="SpriteComponent.hpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

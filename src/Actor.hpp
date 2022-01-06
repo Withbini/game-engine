@@ -15,8 +15,6 @@ public:
 	explicit Actor(class Game* game);
 	virtual ~Actor();
 
-	//TODO :impl. rule of five
-
 	void Update(float deltaTime);
 	virtual void UpdateComponents(float deltaTime);
 	virtual void UpdateActor(float deltaTime);
@@ -31,13 +29,14 @@ public:
 	float getScale() const { return mScale; }
 	void SetScale(float scale) { mScale = scale; }
 
-	void AddComponent(Component* comp);
-	void RemoveComponent(Component* comp);
-
 	float GetRotation() const { return mRotation; }
 	void SetRotation(float rotation) { mRotation = rotation; }
 
+	Vector2 GetForward() const { return Vector2(Math::Cos(mRotation), -Math::Sin(mRotation)); }
+
 	class Game* GetGame() const { return mGame; }
+	void AddComponent(Component* comp);
+	void RemoveComponent(Component* comp);
 private:
 	State mState;
 	Vector2 mPosition;
