@@ -12,7 +12,7 @@ void BGSpriteComponent::Update(float deltaTime)
 	SpriteComponent::Update(deltaTime);
 	for (auto &bg : mBGTextures)
 	{
-		bg.mOffset.x -= mScrollSpeed * deltaTime;
+		bg.mOffset.x += mScrollSpeed * deltaTime;
 		if (bg.mOffset.x < -mScreenSize.x)
 		{
 			bg.mOffset.x = (mBGTextures.size() - 1.f)  * mScreenSize.x - 1;

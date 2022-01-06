@@ -156,7 +156,7 @@ void Game::GenerateOutput()
 	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
 	SDL_RenderClear(mRenderer);
 
-	for(auto sprite: mSprites)
+	for(auto* sprite: mSprites)
 	{
 		sprite->Draw(mRenderer);
 	}

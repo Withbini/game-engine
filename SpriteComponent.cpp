@@ -1,14 +1,22 @@
 #include "SpriteComponent.hpp"
 #include "Actor.hpp"
+#include "Game.hpp"
 #include "Math.hpp"
 
 
-SpriteComponent::SpriteComponent(Actor* owner, int drawOrder) : Component(owner, drawOrder)
+SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
+	: Component(owner, drawOrder)
+	,mTexture(nullptr)
+	,mDrawOrder(drawOrder)
+	,mTextureWidth(0)
+	,mTextureHeight(0)
 {
+	mOwner->GetGame()->AddSprite(this);
 }
 
 SpriteComponent::~SpriteComponent()
 {
+	mOwner->GetGame()->RemoveSprite(this);
 }
 
 void SpriteComponent::Draw(SDL_Renderer* renderer)
@@ -22,7 +30,6 @@ void SpriteComponent::Draw(SDL_Renderer* renderer)
 		r.y = static_cast<int>(mOwner->GetPosition().y - r.h / 2.f);
 		SDL_RenderCopyEx(renderer, mTexture, nullptr, &r, -Math::ToDegrees(mOwner->GetRotation()), nullptr, SDL_FLIP_NONE);
 	}
-
 }
 
 void SpriteComponent::SetTexture(SDL_Texture* texture)
