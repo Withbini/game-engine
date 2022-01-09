@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "Actor.hpp"
+#include "Asteroid.hpp"
 #include "Component.hpp"
 #include "SDL.h"
 
@@ -23,8 +24,24 @@ public:
 	void RemoveSprite(class SpriteComponent* sprite);
 
 	SDL_Texture* GetTexture(const std::string& fileName);
+
+	//for chapter3
+	void AddAsteroid(Asteroid* asteroid)
+	{
+		mAsteroid.push_back(asteroid);
+	}
+	std::vector<Asteroid*> GetAsteroid() const { return mAsteroid; }
+	void SetAsteroid(const std::vector<Asteroid*>& m_asteroid) { mAsteroid = m_asteroid; }
+	void RemoveAsteroid(Asteroid* asteroid)
+	{
+		auto iter = std::find(mAsteroid.begin(),mAsteroid.end(), asteroid);
+		if (iter != mAsteroid.end())
+			mAsteroid.erase(iter);
+	}
+private:
+	std::vector<class Asteroid*>mAsteroid;
 protected:
-	virtual void ProcessInput();
+	void ProcessInput();
 	void UpdateGame();
 	void GenerateOutput();
 

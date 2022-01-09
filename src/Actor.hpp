@@ -19,6 +19,9 @@ public:
 	virtual void UpdateComponents(float deltaTime);
 	virtual void UpdateActor(float deltaTime);
 
+	void ProcessInput(const uint8_t* keyState);
+	virtual void ActorInput(const uint8_t* keyState){}
+
 	//getter setter
 	const Vector2& GetPosition() const { return mPosition; }
 	void SetPosition(const Vector2& pos) { mPosition = pos; }
@@ -26,7 +29,7 @@ public:
 	State GetState() const { return mState; }
 	void SetState(State state) { mState = state; }
 
-	float getScale() const { return mScale; }
+	float GetScale() const { return mScale; }
 	void SetScale(float scale) { mScale = scale; }
 
 	float GetRotation() const { return mRotation; }
@@ -45,4 +48,6 @@ private:
 
 	std::vector<Component*> mComponents;
 	class Game* mGame;
+
+	//TODO:manage component deletion
 };

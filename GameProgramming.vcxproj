@@ -26,11 +26,12 @@
     <ClCompile Include="example\ShipGame.cpp" />
     <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\AnimSpriteComponent.cpp" />
-    <ClCompile Include="src\AniSpriteComponent.cpp" />
     <ClCompile Include="src\BGSpriteComponent.cpp" />
+    <ClCompile Include="src\CircleComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
+    <ClCompile Include="src\Laser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
@@ -45,11 +46,12 @@
     <ClInclude Include="example\ShipGame.hpp" />
     <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AnimSpriteComponent.hpp" />
-    <ClInclude Include="src\AniSpriteComponent.hpp" />
     <ClInclude Include="src\BGSpriteComponent.hpp" />
+    <ClInclude Include="src\CircleComponent.hpp" />
     <ClInclude Include="src\Component.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\InputComponent.hpp" />
+    <ClInclude Include="src\Laser.hpp" />
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\Random.hpp" />

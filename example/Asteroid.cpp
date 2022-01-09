@@ -1,11 +1,14 @@
 #include "Asteroid.hpp"
+
+
+#include "AsteroidGame.hpp"
+#include "CircleComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "MoveComponent.hpp"
 #include "Game.hpp"
 #include "Random.hpp"
-//#include "CircleComponent.hpp"
 
-Asteroid::Asteroid(Game* game)
+Asteroid::Asteroid(AsteroidGame* game)
 	:Actor(game)
 	,mCircle(nullptr)
 {
@@ -21,15 +24,14 @@ Asteroid::Asteroid(Game* game)
 	MoveComponent* mc = new MoveComponent(this);
 	mc->SetForwardSpeed(100.0f);
 
-	// Create a circle component (for collision)
-	//mCircle = new CircleComponent(this);
-	//mCircle->SetRadius(40.0f);
+	mCircle = new CircleComponent(this);
+	mCircle->SetRadius(40.0f);
 
 	// Add to mAsteroids in game
-	//game->AddAsteroid(this);
+	game->AddAsteroid(this);
 }
 
 Asteroid::~Asteroid()
 {
-	//GetGame()->RemoveAsteroid(this);
+	GetGame()->RemoveAsteroid(this);
 }

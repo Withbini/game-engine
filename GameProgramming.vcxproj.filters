@@ -16,24 +16,18 @@
     <Filter Include="소스 파일\example">
       <UniqueIdentifier>{fed928b8-8dca-447d-a688-e5bbe5455901}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\example\chatper2">
+      <UniqueIdentifier>{29c2b1b1-ba0f-4f5d-bb29-d1b15a399f35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\example\chapter3">
+      <UniqueIdentifier>{3e55339d-c995-4e95-b588-ad77805e3f36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="example\Asteroid.cpp">
-      <Filter>소스 파일\example</Filter>
-    </ClCompile>
-    <ClCompile Include="example\Ship.cpp">
-      <Filter>소스 파일\example</Filter>
-    </ClCompile>
-    <ClCompile Include="example\ShipGame.cpp">
-      <Filter>소스 파일\example</Filter>
-    </ClCompile>
     <ClCompile Include="src\Actor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\AnimSpriteComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AniSpriteComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="src\BGSpriteComponent.cpp">
@@ -63,20 +57,29 @@
     <ClCompile Include="src\SpriteComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\CircleComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="example\Ship.cpp">
+      <Filter>소스 파일\example\chatper2</Filter>
+    </ClCompile>
+    <ClCompile Include="example\ShipGame.cpp">
+      <Filter>소스 파일\example\chatper2</Filter>
+    </ClCompile>
+    <ClCompile Include="example\Asteroid.cpp">
+      <Filter>소스 파일\example\chapter3</Filter>
+    </ClCompile>
     <ClCompile Include="example\AsteroidGame.cpp">
-      <Filter>소스 파일\example</Filter>
+      <Filter>소스 파일\example\chapter3</Filter>
     </ClCompile>
     <ClCompile Include="example\Ship2.cpp">
-      <Filter>소스 파일\example</Filter>
+      <Filter>소스 파일\example\chapter3</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Laser.cpp">
+      <Filter>소스 파일\example\chapter3</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="example\Ship.hpp">
-      <Filter>소스 파일\example</Filter>
-    </ClInclude>
-    <ClInclude Include="example\ShipGame.hpp">
-      <Filter>소스 파일\example</Filter>
-    </ClInclude>
     <ClInclude Include="src\Actor.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -104,20 +107,29 @@
     <ClInclude Include="src\BGSpriteComponent.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="src\AniSpriteComponent.hpp">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\AnimSpriteComponent.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\CircleComponent.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="example\Ship.hpp">
+      <Filter>소스 파일\example\chatper2</Filter>
+    </ClInclude>
+    <ClInclude Include="example\ShipGame.hpp">
+      <Filter>소스 파일\example\chatper2</Filter>
+    </ClInclude>
     <ClInclude Include="example\Asteroid.hpp">
-      <Filter>소스 파일\example</Filter>
+      <Filter>소스 파일\example\chapter3</Filter>
     </ClInclude>
     <ClInclude Include="example\AsteroidGame.hpp">
-      <Filter>소스 파일\example</Filter>
+      <Filter>소스 파일\example\chapter3</Filter>
     </ClInclude>
     <ClInclude Include="example\Ship2.hpp">
-      <Filter>소스 파일\example</Filter>
+      <Filter>소스 파일\example\chapter3</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Laser.hpp">
+      <Filter>소스 파일\example\chapter3</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

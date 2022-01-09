@@ -8,7 +8,8 @@ public:
 	~ShipGame() override= default;
 	void LoadData() override;
 
-	void ProcessInput() override;
+	//TODO:input process by inputComponent class
+	void ProcessInput();
 private:
 	class Ship* mShip;
 };

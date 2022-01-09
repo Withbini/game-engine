@@ -1,73 +1,43 @@
 #include "Ship2.hpp"
-#include <SDL_render.h>
 #include "AnimSpriteComponent.hpp"
 #include "AsteroidGame.hpp"
+#include "CircleComponent.hpp"
 #include "InputComponent.hpp"
+#include "Laser.hpp"
 
-Ship2::Ship2(AsteroidGame* game)
+Ship2::Ship2(Game* game)
 	:Actor(game)
-	, mRightSpeed(0.0f)
-	, mDownSpeed(0.0f)
+	, mCoolDown(0.f)
 {
-	// Create an animated sprite component
-	auto asc = new AnimSpriteComponent(this);
-	std::vector<SDL_Texture*> anims = {
-		game->GetTexture("Assets/Ship.png"),
-		game->GetTexture("Assets/ShipWithThrust.png"),
-	};
-	asc->SetAnimTextures(anims);
+	auto* sc = new SpriteComponent(this, 150);
+	sc->SetTexture(game->GetTexture("Assets/Ship.png"));
 
-	//inputcomponent Ãß°¡
-	auto* input = new InputComponent(this);
+	auto *input = new InputComponent(this);
+	input->SetForwardKey(SDL_SCANCODE_W);
+	input->SetBackKey(SDL_SCANCODE_S);
+	input->SetClockwiseKey(SDL_SCANCODE_A);
+	input->SetCounterClockwiseKey(SDL_SCANCODE_D);
+	input->SetMaxForwardSpeed(300.f);
+	input->SetMaxAngularSpeed(Math::TwoPi);
+
+
+	mCircle = new CircleComponent(this);
+	mCircle->SetRadius(40.f);
 }
 
 void Ship2::UpdateActor(float deltaTime)
 {
-	Actor::UpdateActor(deltaTime);
-	// Update position based on speeds and delta time
-	Vector2 pos = GetPosition();
-	pos.x += mRightSpeed * deltaTime;
-	pos.y += mDownSpeed * deltaTime;
-	// Restrict position to left half of screen
-	if (pos.x < 25.0f)
-	{
-		pos.x = 25.0f;
-	}
-	else if (pos.x > 1255.f)
-	{
-		pos.x = 1255.f;
-	}
-	if (pos.y < 25.0f)
-	{
-		pos.y = 25.0f;
-	}
-	else if (pos.y > 720.0f)
-	{
-		pos.y = 720.0f;
-	}
-	SetPosition(pos);
+	mCoolDown -= deltaTime;
 }
 
-void Ship2::ProcessKeyboard(const uint8_t* state)
+void Ship2::ActorInput(const uint8_t* keyState)
 {
-	mRightSpeed = 0.0f;
-	mDownSpeed = 0.0f;
-	// right/left
-	if (state[SDL_SCANCODE_D])
+	if (keyState[SDL_SCANCODE_SPACE] && mCoolDown <= 0.0f)
 	{
-		mRightSpeed += 250.0f;
-	}
-	if (state[SDL_SCANCODE_A])
-	{
-		mRightSpeed -= 250.0f;
-	}
-	// up/down
-	if (state[SDL_SCANCODE_S])
-	{
-		mDownSpeed += 300.0f;
-	}
-	if (state[SDL_SCANCODE_W])
-	{
-		mDownSpeed -= 300.0f;
+		auto*laser = new Laser(this->GetGame());
+		laser->SetPosition(this->GetPosition());
+		laser->SetRotation(this->GetRotation());
+		//initialize
+		mCoolDown = 0.5f;
 	}
 }

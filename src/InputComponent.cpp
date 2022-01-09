@@ -1,11 +1,3 @@
-// ----------------------------------------------------------------
-// From Game Programming in C++ by Sanjay Madhav
-// Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
-// Released under the BSD License
-// See LICENSE in root directory for full details.
-// ----------------------------------------------------------------
-
 #include "InputComponent.hpp"
 #include "Actor.hpp"
 
@@ -21,7 +13,6 @@ InputComponent::InputComponent(class Actor* owner)
 
 void InputComponent::ProcessInput(const uint8_t* keyState)
 {
-	// Calculate forward speed for MoveComponent
 	float forwardSpeed = 0.0f;
 	if (keyState[mForwardKey])
 	{
@@ -33,7 +24,6 @@ void InputComponent::ProcessInput(const uint8_t* keyState)
 	}
 	SetForwardSpeed(forwardSpeed);
 
-	// Calculate angular speed for MoveComponent
 	float angularSpeed = 0.0f;
 	if (keyState[mClockwiseKey])
 	{
