@@ -10,6 +10,7 @@ public:
 	int GetUpdateOrder() const { return mUpdateOrder; }
 
 	virtual void ProcessInput(const uint8_t* keyState){}
+	virtual void onUpdateWorldTransform(){}
 protected:
 	Actor* mOwner;
 	int mUpdateOrder;

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="example\Asteroid.cpp" />
     <ClCompile Include="example\AsteroidGame.cpp" />
+    <ClCompile Include="example\openglGame.cpp" />
     <ClCompile Include="example\Ship.cpp" />
     <ClCompile Include="example\Ship2.cpp" />
     <ClCompile Include="example\ShipGame.cpp" />
@@ -37,10 +38,13 @@
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\Random.cpp" />
     <ClCompile Include="src\SpriteComponent.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="example\Asteroid.hpp" />
     <ClInclude Include="example\AsteroidGame.hpp" />
+    <ClInclude Include="example\openglGame.hpp" />
     <ClInclude Include="example\Ship.hpp" />
     <ClInclude Include="example\Ship2.hpp" />
     <ClInclude Include="example\ShipGame.hpp" />
@@ -55,7 +59,14 @@
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\Random.hpp" />
+    <ClInclude Include="src\shader\Shader.hpp" />
     <ClInclude Include="src\SpriteComponent.hpp" />
+    <ClInclude Include="src\Texture.hpp" />
+    <ClInclude Include="src\VertexArray.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shader\Sprite.frag" />
+    <None Include="src\shader\Sprite.vert" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -134,12 +145,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\glew\lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -174,8 +185,8 @@
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\glew\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2_image.lib;SDL2.lib;SDL2main.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

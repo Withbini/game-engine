@@ -20,7 +20,6 @@ Ship2::Ship2(Game* game)
 	input->SetMaxForwardSpeed(300.f);
 	input->SetMaxAngularSpeed(Math::TwoPi);
 
-
 	mCircle = new CircleComponent(this);
 	mCircle->SetRadius(40.f);
 }

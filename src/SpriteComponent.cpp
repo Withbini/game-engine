@@ -19,21 +19,21 @@ SpriteComponent::~SpriteComponent()
 	mOwner->GetGame()->RemoveSprite(this);
 }
 
-void SpriteComponent::Draw(SDL_Renderer* renderer)
+void SpriteComponent::Draw(Shader* shader)
 {
 	if (mTexture)
 	{
-		SDL_Rect r;
-		r.w = static_cast<int>(mTextureWidth) * static_cast<int>(mOwner->GetScale());
-		r.h = static_cast<int>(mTextureHeight) * static_cast<int>(mOwner->GetScale());
-		r.x = static_cast<int>(mOwner->GetPosition().x - r.w/2.f);
-		r.y = static_cast<int>(mOwner->GetPosition().y - r.h / 2.f);
-		SDL_RenderCopyEx(renderer, mTexture, nullptr, &r, -Math::ToDegrees(mOwner->GetRotation()), nullptr, SDL_FLIP_NONE);
+		mTexture->SetActive();
+		Matrix4 scaleMat = Matrix4::CreateScale(static_cast<float>(mTextureWidth),static_cast<float>(mTextureHeight),1.0f);
+		Matrix4 worldMat = scaleMat * mOwner->GetWorldTransform();
+		shader->setMat4("world", worldMat);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}
 }
 
-void SpriteComponent::SetTexture(SDL_Texture* texture)
+void SpriteComponent::SetTexture(Texture* texture)
 {
 	mTexture = texture;
-	SDL_QueryTexture(texture, nullptr, nullptr, &mTextureWidth, &mTextureHeight);
+	mTextureWidth = texture->GetWidth();
+	mTextureHeight = texture->GetHeight();
 }

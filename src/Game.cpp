@@ -2,43 +2,64 @@
 #include "Game.hpp"
 #include "SDL_image.h"
 #include "SpriteComponent.hpp"
+#include <GL/glew.h>
+#include "Shader.hpp"
 
 Game::Game()
 	: mWindow(nullptr)
-	, mRenderer(nullptr)
+	, mContext(nullptr)
 	, mIsRunning(true)
 	, mUpdatingActors(false)
 {
 }
 
+Game::~Game()
+{
+}
+
 bool Game::Initialize()
 {
-	const int sdlResult = SDL_Init(SDL_INIT_VIDEO);
-	if (sdlResult != 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
 	{
 		SDL_Log("Unable to initialize SDL : %s", SDL_GetError());
 		return false;
 	}
-	mWindow = SDL_CreateWindow("example", 100, 100, WINDOW_WIDGHT, WINDOW_HEIGHT, 0);
-	if (mWindow == nullptr)
-	{
-		SDL_Log("Unable to create SDL Window : %s", SDL_GetError());
-		return false;
-	}
-	mRenderer = SDL_CreateRenderer(mWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+
+	mWindow = SDL_CreateWindow("example", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
 	if (mWindow == nullptr)
 	{
 		SDL_Log("Unable to create SDL Window : %s", SDL_GetError());
 		return false;
 	}
 
-	if (IMG_Init(IMG_INIT_PNG) == 0)
+	mContext = SDL_GL_CreateContext(mWindow);
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK)
+	{
+		SDL_Log("Failed to initialize GLEW.");
+		return false;
+	}
+	glGetError();
+
+	/*if (IMG_Init(IMG_INIT_PNG) == 0)
 	{
 		SDL_Log("Unable to initialize SDL_image: %s", SDL_GetError());
 		return false;
 	}
-	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);
-	LoadData();
+	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);*/
+	//LoadData();
 	mTicksCount = SDL_GetTicks();
 
 	return true;
@@ -58,7 +79,7 @@ void Game::Shutdown()
 {
 	UnloadData();
 	IMG_Quit();
-	SDL_DestroyRenderer(mRenderer);
+	SDL_GL_DeleteContext(mContext);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 }
@@ -113,14 +134,14 @@ void Game::ProcessInput()
 		mIsRunning = false;
 
 	mUpdatingActors = true;
-	for(auto actor:mActors)
+	for (auto actor : mActors)
 		actor->ProcessInput(state);
 	mUpdatingActors = false;
 }
 
 void Game::UpdateGame()
 {
-	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16)){}
+	while (!SDL_TICKS_PASSED(SDL_GetTicks(), mTicksCount + 16)) {}
 
 	float deltaTime = (SDL_GetTicks() - mTicksCount) / 1000.f;
 	mTicksCount = SDL_GetTicks();
@@ -137,6 +158,7 @@ void Game::UpdateGame()
 
 	for (auto *pending : mPendingActors)
 	{
+		pending->ComputeWorldTransform();
 		mActors.emplace_back(pending);
 	}
 	mPendingActors.clear();
@@ -158,61 +180,45 @@ void Game::UpdateGame()
 
 void Game::GenerateOutput()
 {
-	SDL_SetRenderDrawColor(mRenderer, 0, 0, 0, 255);
-	SDL_RenderClear(mRenderer);
+	/*glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
 
-	for(auto* sprite: mSprites)
+	mSpriteShader->use();
+	mSpriteVerts->SetActive();
+
+	for (auto* sprite : mSprites)
 	{
-		sprite->Draw(mRenderer);
+		sprite->Draw(mSpriteShader);
 	}
 
-	SDL_RenderPresent(mRenderer);
+	SDL_GL_SwapWindow(mWindow);
+	return;*/
 }
 
 void Game::LoadData()
-{
+{	
 }
 
 void Game::UnloadData()
 {
-	while(!mActors.empty())
+	while (!mActors.empty())
 	{
 		delete mActors.back();
 	}
 
-	for(auto texture: mTextures)
+	for (auto texture : mTextures)
 	{
-		SDL_DestroyTexture(texture.second);
+		delete texture.second;
 	}
 	mTextures.clear();
 }
 
-SDL_Texture* Game::LoadTexture(const std::string& fileName) const
+Texture* Game::GetTexture(const std::string& fileName)
 {
-	auto *fp= fopen(fileName.c_str(),"r");
-	SDL_Surface* surface = IMG_Load(fileName.c_str());
-	if (!surface)
-	{
-		SDL_Log("%s", SDL_GetError());
-		SDL_Log("Failed to load texture file %s", fileName.c_str());
-		return nullptr;
-	}
-
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(mRenderer, surface);
-	SDL_FreeSurface(surface);
-	if (!texture)
-	{
-		SDL_Log("Failed to convert surface to texture for %s", fileName.c_str());
-		return nullptr;
-	}
-	return texture;
-}
-
-SDL_Texture* Game::GetTexture(const std::string& fileName)
-{
-	auto textureFromFile = mTextures.find(fileName);
-	if (textureFromFile == mTextures.end()){
-		auto* texture = LoadTexture(fileName);
+	const auto textureFromFile = mTextures.find(fileName);
+	if (textureFromFile == mTextures.end()) {
+		auto* texture = new Texture();
+		texture->Load(fileName);
 		mTextures.insert({ fileName, texture });
 		return texture;
 	}

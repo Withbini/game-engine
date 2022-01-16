@@ -41,7 +41,7 @@ void Laser::UpdateActor(float deltaTime)
 	}
 
 	Vector2 pos = this->GetPosition();
-	if (pos.x<10.f || pos.x>1260.f || pos.y<10.f || pos.y>710.f)
+	if (pos.x<=-720.f || pos.x>=720.f || pos.y<=-360.f || pos.y>=360.f)
 	{
 		this->SetState(EDead);
 	}

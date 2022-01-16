@@ -3,7 +3,7 @@
 class Asteroid : public Actor
 {
 public:
-	Asteroid(class AsteroidGame* game);
+	Asteroid(class Game* game);
 	~Asteroid();
 	
 	class CircleComponent* GetCircle() const { return mCircle; }

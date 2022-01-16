@@ -22,6 +22,9 @@
     <Filter Include="소스 파일\example\chapter3">
       <UniqueIdentifier>{3e55339d-c995-4e95-b588-ad77805e3f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\example\chapter5">
+      <UniqueIdentifier>{4bde70d6-7f85-4a27-b851-fe03c3712521}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Actor.cpp">
@@ -78,6 +81,15 @@
     <ClCompile Include="src\Laser.cpp">
       <Filter>소스 파일\example\chapter3</Filter>
     </ClCompile>
+    <ClCompile Include="src\VertexArray.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="example\openglGame.cpp">
+      <Filter>소스 파일\example\chapter5</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Actor.hpp">
@@ -131,5 +143,25 @@
     <ClInclude Include="src\Laser.hpp">
       <Filter>소스 파일\example\chapter3</Filter>
     </ClInclude>
+    <ClInclude Include="src\shader\Shader.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\VertexArray.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="example\openglGame.hpp">
+      <Filter>소스 파일\example\chapter5</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\shader\Sprite.frag">
+      <Filter>소스 파일</Filter>
+    </None>
+    <None Include="src\shader\Sprite.vert">
+      <Filter>소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

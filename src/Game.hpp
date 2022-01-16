@@ -6,14 +6,15 @@
 #include "Actor.hpp"
 #include "Asteroid.hpp"
 #include "Component.hpp"
-#include "SDL.h"
+#include <SDL.h>
+#include "Texture.hpp"
 
 class Game
 {
 public:
 	Game();
-	virtual ~Game() = default;
-	bool Initialize();
+	virtual ~Game();
+	virtual bool Initialize();
 	void RunLoop();
 	void Shutdown();
 
@@ -23,7 +24,8 @@ public:
 	void AddSprite(class SpriteComponent* sprite);
 	void RemoveSprite(class SpriteComponent* sprite);
 
-	SDL_Texture* GetTexture(const std::string& fileName);
+	//SDL_Texture* GetTexture(const std::string& fileName);
+	Texture* GetTexture(const std::string& fileName);
 
 	//for chapter3
 	void AddAsteroid(Asteroid* asteroid)
@@ -40,17 +42,20 @@ public:
 	}
 private:
 	std::vector<class Asteroid*>mAsteroid;
+	
+	virtual bool LoadShaders() { return true; }
+	
 protected:
 	void ProcessInput();
 	void UpdateGame();
-	void GenerateOutput();
+	virtual void GenerateOutput();
 
 	SDL_Window* mWindow;
-	SDL_Renderer* mRenderer;
+	SDL_GLContext mContext;
 	bool mIsRunning;
 
 	const int WINDOW_HEIGHT = 720;
-	const int WINDOW_WIDGHT = 1280;
+	const int WINDOW_WIDTH = 1280;
 
 	uint32_t mTicksCount;
 
@@ -66,9 +71,9 @@ protected:
 
 	//TODO: wrapper
 	//image
-	SDL_Texture* LoadTexture(const std::string& fileName) const;
+	Texture* LoadTexture(const std::string& fileName) const;
 	//TODO:map container
-	std::unordered_map<std::string, SDL_Texture*> mTextures;
+	std::unordered_map<std::string, Texture*> mTextures;
 
 	//sprite
 	std::vector<class SpriteComponent*> mSprites;

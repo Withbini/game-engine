@@ -8,12 +8,12 @@
 #include "Game.hpp"
 #include "Random.hpp"
 
-Asteroid::Asteroid(AsteroidGame* game)
+Asteroid::Asteroid(Game* game)
 	:Actor(game)
 	,mCircle(nullptr)
 {
-	Vector2 randPos = Random::GetVector(Vector2::Zero,
-		Vector2(1280.0f, 720.0f));
+	Vector2 randPos = Random::GetVector(Vector2(-640.0f, -360.0f),
+		Vector2(640.0f, 360.0f));
 	SetPosition(randPos);
 	SetRotation(Random::GetFloatRange(0.0f, Math::TwoPi));
 

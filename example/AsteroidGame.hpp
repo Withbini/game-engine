@@ -9,8 +9,6 @@ public:
 	~AsteroidGame() override = default;
 	void LoadData() override;
 
-	
-
 private:
 	class Ship2* mShip;
 	
