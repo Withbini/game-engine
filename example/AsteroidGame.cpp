@@ -6,7 +6,7 @@
 void AsteroidGame::LoadData()
 {
 	mShip = new Ship2(this);
-	mShip->SetPosition(Vector2(512.f, 384.0f));
+	mShip->SetPosition(Vector3(512.f, 384.0f,0.f));
 	mShip->SetScale(1.5f);
 	
 	const int numAsteriod = 20;

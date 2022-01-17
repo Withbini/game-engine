@@ -260,7 +260,7 @@ public:
 		,z(0.0f)
 	{}
 
-	explicit Vector3(float inX, float inY, float inZ)
+	explicit Vector3(float inX, float inY, float inZ=0.f)
 		:x(inX)
 		,y(inY)
 		,z(inZ)

@@ -2,6 +2,7 @@
 #include "Game.hpp"
 #include "Shader.hpp"
 #include "VertexArray.hpp"
+#include "Renderer.hpp"
 
 class openglGame :
 	public Game
@@ -14,9 +15,6 @@ public:
 
 private:
 	class Ship2* mShip;
-	bool LoadShaders() override;
-	void CreateSpriteVerts();
-	void GenerateOutput() override;
 
 	VertexArray* mSpriteVerts;
 	int mSpriteFrags;

@@ -10,7 +10,7 @@ Ship2::Ship2(Game* game)
 	, mCoolDown(0.f)
 {
 	auto* sc = new SpriteComponent(this, 150);
-	sc->SetTexture(game->GetTexture("Assets/Ship.png"));
+	sc->SetTexture(game->GetRenderer()->GetTexture("Assets/Ship.png"));
 
 	auto *input = new InputComponent(this);
 	input->SetForwardKey(SDL_SCANCODE_W);

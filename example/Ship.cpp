@@ -10,11 +10,12 @@ Ship::Ship(ShipGame* game)
 {
 	// Create an animated sprite component
 	auto asc = new AnimSpriteComponent(this);
+
 	std::vector<Texture*> anims = {
-		game->GetTexture("Assets/Ship01.png"),
-		game->GetTexture("Assets/Ship02.png"),
-		game->GetTexture("Assets/Ship03.png"),
-		game->GetTexture("Assets/Ship04.png"),
+		game->GetRenderer()->GetTexture("Assets/Ship01.png"),
+		game->GetRenderer()->GetTexture("Assets/Ship02.png"),
+		game->GetRenderer()->GetTexture("Assets/Ship03.png"),
+		game->GetRenderer()->GetTexture("Assets/Ship04.png"),
 	};
 	asc->SetAnimTextures(anims);
 }
@@ -23,7 +24,7 @@ void Ship::UpdateActor(float deltaTime)
 {
 	Actor::UpdateActor(deltaTime);
 	// Update position based on speeds and delta time
-	Vector2 pos = GetPosition();
+	Vector3 pos = GetPosition();
 	pos.x += mRightSpeed * deltaTime;
 	pos.y += mDownSpeed * deltaTime;
 	// Restrict position to left half of screen

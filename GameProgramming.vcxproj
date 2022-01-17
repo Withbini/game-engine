@@ -28,6 +28,7 @@
     <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\AnimSpriteComponent.cpp" />
     <ClCompile Include="src\BGSpriteComponent.cpp" />
+    <ClCompile Include="src\CameraActor.cpp" />
     <ClCompile Include="src\CircleComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -35,8 +36,11 @@
     <ClCompile Include="src\Laser.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math.cpp" />
+    <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
+    <ClCompile Include="src\openglRenderer.cpp" />
     <ClCompile Include="src\Random.cpp" />
+    <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\SpriteComponent.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
@@ -51,14 +55,18 @@
     <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AnimSpriteComponent.hpp" />
     <ClInclude Include="src\BGSpriteComponent.hpp" />
+    <ClInclude Include="src\CameraActor.hpp" />
     <ClInclude Include="src\CircleComponent.hpp" />
     <ClInclude Include="src\Component.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\InputComponent.hpp" />
     <ClInclude Include="src\Laser.hpp" />
     <ClInclude Include="src\Math.hpp" />
+    <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
+    <ClInclude Include="src\openglRenderer.hpp" />
     <ClInclude Include="src\Random.hpp" />
+    <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\shader\Shader.hpp" />
     <ClInclude Include="src\SpriteComponent.hpp" />
     <ClInclude Include="src\Texture.hpp" />
@@ -145,7 +153,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)3rdParty\Exporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

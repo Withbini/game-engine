@@ -11,12 +11,12 @@ SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
 	,mTextureWidth(0)
 	,mTextureHeight(0)
 {
-	mOwner->GetGame()->AddSprite(this);
+	mOwner->GetGame()->GetRenderer()->AddSprite(this);
 }
 
 SpriteComponent::~SpriteComponent()
 {
-	mOwner->GetGame()->RemoveSprite(this);
+	mOwner->GetGame()->GetRenderer()->RemoveSprite(this);
 }
 
 void SpriteComponent::Draw(Shader* shader)

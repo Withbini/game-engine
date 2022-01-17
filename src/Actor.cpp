@@ -4,9 +4,9 @@
 
 Actor::Actor(Game* game)
 	: mState(EActive)
-	, mPosition(0, 0)
+	, mPosition(0, 0,0)
 	, mScale(1.0f)
-	, mRotation(0.0f)
+	, mRotation(Quaternion::Identity)
 	, mGame(game)
 	, mRecomputeWorldTransform(true)
 {
@@ -82,8 +82,8 @@ void Actor::ComputeWorldTransform()
 	{
 		mRecomputeWorldTransform = false;
 		mWorldTransform = Matrix4::CreateScale(mScale);
-		mWorldTransform *= Matrix4::CreateRotationZ(mRotation);
-		mWorldTransform *= Matrix4::CreateTranslation(Vector3(mPosition.x, mPosition.y, 0.0f));
+		mWorldTransform *= Matrix4::CreateFromQuaternion(mRotation);
+		mWorldTransform *= Matrix4::CreateTranslation(Vector3(mPosition.x, mPosition.y, mPosition.z));
 
 		for(auto *comp:mComponents)
 		{

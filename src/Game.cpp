@@ -1,68 +1,23 @@
-#define _CRT_SECURE_NO_WARNINGS
 #include "Game.hpp"
 #include "SDL_image.h"
 #include "SpriteComponent.hpp"
-#include <GL/glew.h>
+#include "Renderer.hpp"
 #include "Shader.hpp"
 
 Game::Game()
-	: mWindow(nullptr)
-	, mContext(nullptr)
-	, mIsRunning(true)
+	: mIsRunning(true)
 	, mUpdatingActors(false)
+	, mRenderer(nullptr)
 {
 }
 
 Game::~Game()
 {
-}
-
-bool Game::Initialize()
-{
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) != 0)
+	if(mRenderer)
 	{
-		SDL_Log("Unable to initialize SDL : %s", SDL_GetError());
-		return false;
+		delete mRenderer;
+		mRenderer = nullptr;
 	}
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-
-	mWindow = SDL_CreateWindow("example", 100, 100, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL);
-	if (mWindow == nullptr)
-	{
-		SDL_Log("Unable to create SDL Window : %s", SDL_GetError());
-		return false;
-	}
-
-	mContext = SDL_GL_CreateContext(mWindow);
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
-	{
-		SDL_Log("Failed to initialize GLEW.");
-		return false;
-	}
-	glGetError();
-
-	/*if (IMG_Init(IMG_INIT_PNG) == 0)
-	{
-		SDL_Log("Unable to initialize SDL_image: %s", SDL_GetError());
-		return false;
-	}
-	IMG_Init(IMG_INIT_JPG | IMG_INIT_PNG);*/
-	//LoadData();
-	mTicksCount = SDL_GetTicks();
-
-	return true;
 }
 
 void Game::RunLoop()
@@ -79,8 +34,10 @@ void Game::Shutdown()
 {
 	UnloadData();
 	IMG_Quit();
-	SDL_GL_DeleteContext(mContext);
-	SDL_DestroyWindow(mWindow);
+	if(mRenderer)
+	{
+		mRenderer->Shutdown();
+	}
 	SDL_Quit();
 }
 
@@ -178,25 +135,13 @@ void Game::UpdateGame()
 	}
 }
 
-void Game::GenerateOutput()
+void Game::GenerateOutput() const
 {
-	/*glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);
-
-	mSpriteShader->use();
-	mSpriteVerts->SetActive();
-
-	for (auto* sprite : mSprites)
-	{
-		sprite->Draw(mSpriteShader);
-	}
-
-	SDL_GL_SwapWindow(mWindow);
-	return;*/
+	mRenderer->Draw();
 }
 
 void Game::LoadData()
-{	
+{
 }
 
 void Game::UnloadData()
@@ -206,41 +151,6 @@ void Game::UnloadData()
 		delete mActors.back();
 	}
 
-	for (auto texture : mTextures)
-	{
-		delete texture.second;
-	}
-	mTextures.clear();
-}
-
-Texture* Game::GetTexture(const std::string& fileName)
-{
-	const auto textureFromFile = mTextures.find(fileName);
-	if (textureFromFile == mTextures.end()) {
-		auto* texture = new Texture();
-		texture->Load(fileName);
-		mTextures.insert({ fileName, texture });
-		return texture;
-	}
-	return textureFromFile->second;
-}
-
-void Game::AddSprite(SpriteComponent* sprite)
-{
-	const int drawOrder = sprite->GetDrawOrder();
-	auto it = mSprites.begin();
-	for (; it != mSprites.end(); ++it)
-	{
-		if (drawOrder < (*it)->GetDrawOrder())
-		{
-			break;
-		}
-	}
-	mSprites.insert(it, sprite);
-}
-
-void Game::RemoveSprite(SpriteComponent* sprite)
-{
-	auto delSprite = std::find(mSprites.begin(), mSprites.end(), sprite);
-	mSprites.erase(delSprite);
+	if(mRenderer)
+		mRenderer->UnloadData();
 }

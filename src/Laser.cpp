@@ -11,7 +11,7 @@ Laser::Laser(Game* game)
 {
 	// Create an animated sprite component
 	auto* asc = new SpriteComponent(this);
-	asc->SetTexture(game->GetTexture("Assets/laser.png"));
+	asc->SetTexture(game->GetRenderer()->GetTexture("Assets/laser.png"));
 
 	//inputcomponent Ãß°¡
 	auto* move = new MoveComponent(this);
@@ -40,7 +40,7 @@ void Laser::UpdateActor(float deltaTime)
 		}
 	}
 
-	Vector2 pos = this->GetPosition();
+	Vector3 pos = this->GetPosition();
 	if (pos.x<=-720.f || pos.x>=720.f || pos.y<=-360.f || pos.y>=360.f)
 	{
 		this->SetState(EDead);

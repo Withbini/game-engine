@@ -1,78 +1,111 @@
 #include "Mesh.hpp"
-#include <string>
 
-Mesh::Mesh(vector<Vertex> vertices, vector<unsigned> indices, vector<Texture> textures)
+#include <rapidjson/document.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
+
+#include "Game.hpp"
+#include "VertexArray.hpp"
+#include "Texture.hpp"
+#include "Shader.hpp"
+
+using std::string;
+using std::vector;
+
+using namespace rapidjson;
+Mesh::Mesh()
+	:mShaderName(nullptr)
+	,mVertexArray(nullptr)
+	,mRadius(0)
 {
-	this->vertices = vertices;
-	this->indices = indices;
-	this->textures = textures;
-
-	setupMesh();
 }
 
-void Mesh::draw(Shader shader)
+Mesh::~Mesh()
 {
-	unsigned int diffuseNr = 1;
-	unsigned int specularNr = 1;
-	unsigned int normalNr = 1;
-	unsigned int heightNr = 1;
-	
-	for(unsigned int i=0;i<textures.size();++i)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		string number;
-		string name = textures[i].type;
-		
-		if (name == "texture_diffuse")
-			number = to_string(diffuseNr++);
-		else if (name == "texture_diffuse")
-			number = to_string(specularNr++);
-		else if (name == "texture_normal")
-			number = std::to_string(normalNr++);
-		else if (name == "texture_height")
-			number = std::to_string(heightNr++);
+	delete mVertexArray;
+}
 
-		shader.setFloat(("material." + name + number).c_str(), static_cast<float>(i));
-		glBindTexture(GL_TEXTURE_2D, textures[i].id);
+string read(const string& path)
+{
+	struct stat sb {};
+	string res;
+
+	FILE* input;
+	fopen_s(&input, path.c_str(), "r");
+	if (input == nullptr)
+	{
+		assert(false);
 	}
 
-	glBindVertexArray(VAO);
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-	glBindVertexArray(0);
-	
-	glActiveTexture(GL_TEXTURE0);
-}
+	stat(path.c_str(), &sb);
+	res.resize(sb.st_size);
+	fread(const_cast<char*>(res.data()), sb.st_size, 1, input);
+	fclose(input);
 
-void Mesh::setupMesh()
+	SDL_Log("%s", res);
+
+	return res;
+}
+bool ParseJson(Document &doc, const std::string& jsonData)
 {
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	if (doc.Parse(jsonData.c_str()).HasParseError())
+	{
+		return false;
+	}
 
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
-
-	// vertex positions
-    glEnableVertexAttribArray(0);	
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    // vertex normals
-    glEnableVertexAttribArray(1);	
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    // vertex texture coords
-    glEnableVertexAttribArray(2);	
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-	
-	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Tangent));
-	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Bitangent));
-
-	glBindVertexArray(0);
+	return doc.IsObject();
+}
+std::string JsonDocToString(Document &doc)
+{
+	StringBuffer buffer;
+	Writer<StringBuffer> writer(buffer);
+	doc.Accept(writer);
+	return buffer.GetString();
 }
 
+bool Mesh::Load(const std::string& file, Game* game)
+{
+	Document document;
+	string jsonFile = read(file);
+	document.Parse(jsonFile.c_str());
 
+	assert(document["shader"].IsString());
+	mShaderName = document["shader"].GetString();
 
+	assert(document["textures"].IsArray());
+	Value& textures = document["textures"];
+	std::vector<Texture*> texs;
+	for (auto i = 0; i < textures.Size(); ++i)
+	{
+		texs.push_back(game->GetRenderer()->GetTexture(textures[i].GetString()));
+	}
+
+	vector<float>vertex;
+	vector<unsigned int> indices;
+	Value& vert = document["vertices"];
+	for (SizeType i = 0; i < vert.Size(); ++i)
+	{
+		for (auto j = 0; j < 8; ++j)
+		{
+			vertex.push_back(vert[i][j].GetFloat());
+		}
+	}
+
+	Value& index = document["indices"];
+	for (SizeType i = 0; i < vert.Size(); ++i)
+	{
+		for (auto j = 0; j < 3; ++j)
+		{
+			indices.push_back(index[i][j].GetInt());
+		}
+	}
+	mVertexArray = new VertexArray(vertex.data(), vertex.size(), indices.data(), indices.size());
+
+	std::string jsonString = JsonDocToString(document);
+	return true;
+}
+
+void Mesh::UnLoad()
+{
+}
