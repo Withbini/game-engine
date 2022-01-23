@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="example\3dGame.cpp" />
     <ClCompile Include="example\Asteroid.cpp" />
     <ClCompile Include="example\AsteroidGame.cpp" />
     <ClCompile Include="example\openglGame.cpp" />
@@ -37,8 +38,10 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\MeshComponent.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\openglRenderer.cpp" />
+    <ClCompile Include="src\PlaneActor.cpp" />
     <ClCompile Include="src\Random.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
     <ClCompile Include="src\SpriteComponent.cpp" />
@@ -46,6 +49,7 @@
     <ClCompile Include="src\VertexArray.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="example\3dGame.hpp" />
     <ClInclude Include="example\Asteroid.hpp" />
     <ClInclude Include="example\AsteroidGame.hpp" />
     <ClInclude Include="example\openglGame.hpp" />
@@ -63,8 +67,10 @@
     <ClInclude Include="src\Laser.hpp" />
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
+    <ClInclude Include="src\MeshComponent.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\openglRenderer.hpp" />
+    <ClInclude Include="src\PlaneActor.hpp" />
     <ClInclude Include="src\Random.hpp" />
     <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\shader\Shader.hpp" />
@@ -73,6 +79,10 @@
     <ClInclude Include="src\VertexArray.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="src\shader\Basic.frag" />
+    <None Include="src\shader\Basic.vert" />
+    <None Include="src\shader\Phong.frag" />
+    <None Include="src\shader\Phong.vert" />
     <None Include="src\shader\Sprite.frag" />
     <None Include="src\shader\Sprite.vert" />
   </ItemGroup>

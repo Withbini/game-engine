@@ -6,6 +6,8 @@
 #include <sstream>
 #include <iostream>
 
+
+#include "3dGame.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
@@ -66,7 +68,8 @@ int main(int argc,char* argv[])
 	//ShipGame game;
 	//AsteroidGame game;
 	//Game game;
-	openglGame game;
+	//openglGame game;
+	GL3DGame game;
 	bool success = game.Initialize();
 	if(success)
 	{

@@ -24,6 +24,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{6edd1d74-4ae5-47f9-8567-1ee305f47132}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\example\chapter6">
+      <UniqueIdentifier>{de85f645-ee31-482b-a780-3ec2e128d14d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Actor.cpp">
@@ -99,6 +102,15 @@
       <Filter>소스 파일\example\chapter5</Filter>
     </ClCompile>
     <ClCompile Include="src\CameraActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="example\3dGame.cpp">
+      <Filter>소스 파일\example\chapter6</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PlaneActor.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -178,12 +190,33 @@
     <ClInclude Include="src\CameraActor.hpp">
       <Filter>소스 파일</Filter>
     </ClInclude>
+    <ClInclude Include="src\MeshComponent.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="example\3dGame.hpp">
+      <Filter>소스 파일\example\chapter6</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PlaneActor.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader\Sprite.frag">
       <Filter>Shader</Filter>
     </None>
     <None Include="src\shader\Sprite.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Basic.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Basic.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Phong.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Phong.vert">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

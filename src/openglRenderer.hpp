@@ -16,7 +16,6 @@ private:
 	class Ship2* mShip;
 	void Draw() override;
 
-	VertexArray* mSpriteVerts;
 	int mSpriteFrags;
 	Shader* mSpriteShader;
 };

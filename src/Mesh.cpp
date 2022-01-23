@@ -4,8 +4,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-
-#include "Game.hpp"
+#include "Renderer.hpp"
 #include "VertexArray.hpp"
 #include "Texture.hpp"
 #include "Shader.hpp"
@@ -15,97 +14,107 @@ using std::vector;
 
 using namespace rapidjson;
 Mesh::Mesh()
-	:mShaderName(nullptr)
-	,mVertexArray(nullptr)
-	,mRadius(0)
+	: mShaderName("")
+	, mVertexArray(nullptr)
+	, mRadius(0)
 {
 }
 
 Mesh::~Mesh()
 {
-	delete mVertexArray;
 }
 
-string read(const string& path)
+string Mesh::read(const string& path)
 {
-	struct stat sb {};
-	string res;
-
-	FILE* input;
-	fopen_s(&input, path.c_str(), "r");
-	if (input == nullptr)
+	std::ifstream file(path);
+	std::stringstream ss;
+	if(file.fail())
 	{
+		SDL_Log("File %s is not valid", path.c_str());
+		file.close();
 		assert(false);
+		return "";
 	}
+	ss << file.rdbuf();
+	string res = ss.str();
 
-	stat(path.c_str(), &sb);
-	res.resize(sb.st_size);
-	fread(const_cast<char*>(res.data()), sb.st_size, 1, input);
-	fclose(input);
-
-	SDL_Log("%s", res);
-
+	SDL_Log("File read result: %s", res.c_str());
+	file.close();
 	return res;
 }
-bool ParseJson(Document &doc, const std::string& jsonData)
-{
-	if (doc.Parse(jsonData.c_str()).HasParseError())
-	{
-		return false;
-	}
 
-	return doc.IsObject();
-}
-std::string JsonDocToString(Document &doc)
-{
-	StringBuffer buffer;
-	Writer<StringBuffer> writer(buffer);
-	doc.Accept(writer);
-	return buffer.GetString();
-}
-
-bool Mesh::Load(const std::string& file, Game* game)
+bool Mesh::Load(const std::string& file, Renderer* renderer)
 {
 	Document document;
 	string jsonFile = read(file);
 	document.Parse(jsonFile.c_str());
 
+	if (!document.IsObject())
+	{
+		SDL_Log("Mesh %s is not valid", file.c_str());
+		return false;
+	}
+
 	assert(document["shader"].IsString());
 	mShaderName = document["shader"].GetString();
 
 	assert(document["textures"].IsArray());
-	Value& textures = document["textures"];
+	const Value& textures = document["textures"];
 	std::vector<Texture*> texs;
-	for (auto i = 0; i < textures.Size(); ++i)
+	for (SizeType i = 0; i < textures.Size(); ++i)
 	{
-		texs.push_back(game->GetRenderer()->GetTexture(textures[i].GetString()));
+		const string & textureName = textures[i].GetString();
+		auto *t = renderer->GetTexture(textureName);
+		if (t == nullptr)
+		{
+			t = renderer->GetTexture("Assets/Default.png");
+		}
+		mTextures.emplace_back(t);
 	}
+
+	mSpecPower = static_cast<float>(document["specularPower"].GetDouble());
 
 	vector<float>vertex;
-	vector<unsigned int> indices;
 	Value& vert = document["vertices"];
+	vertex.reserve(vert.Size() * 8);
+	mRadius = 0.f;
 	for (SizeType i = 0; i < vert.Size(); ++i)
 	{
-		for (auto j = 0; j < 8; ++j)
+		const Value& v = vert[i];
+		Vector3 pos(v[0].GetFloat(), v[1].GetFloat(), v[2].GetFloat());
+		mRadius = Math::Max(mRadius, pos.LengthSq());
+		for (auto j = 0; j < 8; ++j) //TODO: vertex property can be changed.
 		{
-			vertex.push_back(vert[i][j].GetFloat());
+			vertex.emplace_back(static_cast<float>(vert[i][j].GetDouble()));
 		}
 	}
+	mRadius = Math::Sqrt(mRadius);
 
+	vector<unsigned int> indices;
 	Value& index = document["indices"];
-	for (SizeType i = 0; i < vert.Size(); ++i)
+	indices.reserve(index.Size() * 3);
+	for (SizeType i = 0; i < index.Size(); ++i)
 	{
 		for (auto j = 0; j < 3; ++j)
 		{
-			indices.push_back(index[i][j].GetInt());
+			indices.emplace_back(index[i][j].GetUint());
 		}
 	}
-	mVertexArray = new VertexArray(vertex.data(), vertex.size(), indices.data(), indices.size());
-
-	std::string jsonString = JsonDocToString(document);
+	mVertexArray = new VertexArray(vertex.data(), vertex.size() / 8, indices.data(), static_cast<unsigned>(indices.size()));
 	return true;
 }
 
 void Mesh::UnLoad()
 {
+	delete mVertexArray;
+	mVertexArray = nullptr;
+}
+
+Texture* Mesh::GetTexture(size_t index)
+{
+	if (index < mTextures.size())
+	{
+		return mTextures[index];
+	}
+	return nullptr;
 }

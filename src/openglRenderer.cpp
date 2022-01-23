@@ -15,6 +15,7 @@ openglRenderer::~openglRenderer()
 
 bool openglRenderer::LoadShaders()
 {
+	Renderer::LoadShaders();
 	mSpriteShader = new Shader("src/shader/Sprite.vert", "src/shader/Sprite.frag");
 	mSpriteShader->use();
 	const Matrix4 viewProj = Matrix4::CreateSimpleViewProj(GetScreenWidth(), GetScreenHeight());
@@ -25,27 +26,17 @@ bool openglRenderer::LoadShaders()
 
 void openglRenderer::CreateSpriteVerts()
 {
-	float vertices[] = {
-		-0.5f,  0.5f, 0.f, 0.f, 0.f,
-		 0.5f,  0.5f, 0.f, 1.f, 0.f,
-		 0.5f, -0.5f, 0.f, 1.f, 1.f,
-		-0.5f, -0.5f, 0.f, 0.f, 1.f
-	};
-
-	unsigned int indices[] = {
-		0, 1, 2,
-		2, 3, 0
-	};
-
-	mSpriteVerts = new VertexArray(vertices, 4, indices, 6);
+	Renderer::CreateSpriteVerts();
 }
 
 void openglRenderer::Draw()
 {
-	glClearColor(0.86f, 0.86f, 0.86f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	Renderer::Draw();
+	
+	//투명한 오브젝트를 화가 알고리즘에 따라 그리기
+	//especially sprite
 	glEnable(GL_BLEND);
+	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	mSpriteShader->use();

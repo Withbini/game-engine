@@ -11,7 +11,7 @@ class Game
 public:
 	Game();
 	virtual ~Game();
-	virtual bool Initialize()=0;
+	virtual bool Initialize();
 	void RunLoop();
 	void Shutdown();
 
@@ -32,10 +32,9 @@ public:
 			mAsteroid.erase(iter);
 	}
 
-	Renderer* GetRenderer() const {return mRenderer;}
+	class Renderer* GetRenderer() const {return mRenderer;}
 private:
 	std::vector<class Asteroid*>mAsteroid;
-	
 
 	void UnloadData();
 	void UpdateGame();
@@ -45,7 +44,7 @@ protected:
 	void GenerateOutput() const;
 
 	bool mIsRunning;
-	Uint32 mTicksCount;
+	uint32_t mTicksCount;
 	const int WINDOW_HEIGHT = 720;
 	const int WINDOW_WIDTH = 1280;
 
@@ -54,5 +53,6 @@ protected:
 	std::vector<Actor*>mPendingActors;
 	bool mUpdatingActors;
 
-	Renderer* mRenderer;
+	class Renderer* mRenderer;
+	class CameraActor* mCameraActor;
 };

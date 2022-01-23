@@ -2,7 +2,6 @@
 #include "SDL_image.h"
 #include "SpriteComponent.hpp"
 #include "Renderer.hpp"
-#include "Shader.hpp"
 
 Game::Game()
 	: mIsRunning(true)
@@ -18,6 +17,20 @@ Game::~Game()
 		delete mRenderer;
 		mRenderer = nullptr;
 	}
+}
+
+bool Game::Initialize()
+{
+	mRenderer = new	Renderer(this);
+	if (!mRenderer->Initialize((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT))
+	{
+		SDL_Log("Failed to initialize renderer");
+		delete mRenderer;
+		mRenderer = nullptr;
+		return false;
+	}
+	LoadData();
+	return true;
 }
 
 void Game::RunLoop()
