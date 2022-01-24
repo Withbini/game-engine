@@ -3,8 +3,14 @@
 #include <unordered_map>
 #include <vector>
 #include <SDL.h>
-
 #include "Math.hpp"
+
+//phong shader
+struct DirectionalLight {
+	Vector3 mDirection;
+	Vector3 mDiffuseColor;
+	Vector3 mSpecColor;
+};
 
 class Renderer
 {
@@ -30,7 +36,19 @@ public:
 	float GetScreenHeight() const { return mScreenHeight; }
 
 	void UnloadData();
-	void SetUniforms(class Shader* shader);
+	void SetUniforms(class Shader* shader) const;
+
+	Matrix4 GetViewMatrix() const {return mViewMatrix;}
+	//Matrix4 GetProjMatrix() const {return mProjMatrix;}
+	void SetViewMatrix(const Matrix4& mat) { mViewMatrix = mat; }
+	//void SetProjMatrix(const Matrix4& mat) { mProjMatrix = mat; }
+
+	DirectionalLight& GetDirectionalLight() {return mDirLight;}
+	void SetDirectionalLight(const DirectionalLight& light) {mDirLight = light;}
+	Vector3 GetAmbientLight() const {return mAmbient;}
+	void SetAmbientLight(const Vector3& ambient) {mAmbient = ambient;}
+	Vector3 GetLightColor() const {return mLightColor;}
+	void SetLightColor(const Vector3& color) {mLightColor =color;}
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();
@@ -53,17 +71,9 @@ protected:
 
 	Matrix4 mViewMatrix;
 	Matrix4 mProjMatrix;
-	Shader* mMeshShader;
-
-	//phong shader
-	struct DirectionalLight {
-		Vector3 mDirection;
-		Vector3 mDiffuseColor;
-		Vector3 mSpecColor;
-	};
+	class Shader* mMeshShader;
 	DirectionalLight mDirLight;
 	Vector3 mAmbient;
 	Vector3 mLightColor;
 	float mSpecPower = 20.f;
-
 };

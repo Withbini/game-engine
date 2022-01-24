@@ -27,12 +27,12 @@ void Actor::Update(float deltaTime)
 {
 	if (mState == EActive)
 	{
-		ComputeWorldTransform(); //움직이기 전에
+		ComputeWorldTransform();
 
 		UpdateComponents(deltaTime);
 		UpdateActor(deltaTime);
 
-		ComputeWorldTransform(); //움직인 후
+		ComputeWorldTransform();
 	}
 }
 
@@ -83,7 +83,7 @@ void Actor::ComputeWorldTransform()
 		mRecomputeWorldTransform = false;
 		mWorldTransform = Matrix4::CreateScale(mScale);
 		mWorldTransform *= Matrix4::CreateFromQuaternion(mRotation);
-		mWorldTransform *= Matrix4::CreateTranslation(Vector3(mPosition.x, mPosition.y, mPosition.z));
+		mWorldTransform *= Matrix4::CreateTranslation(mPosition);
 
 		for(auto *comp:mComponents)
 		{

@@ -33,14 +33,13 @@ void openglRenderer::Draw()
 {
 	Renderer::Draw();
 	
-	//투명한 오브젝트를 화가 알고리즘에 따라 그리기
 	//especially sprite
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	mSpriteShader->use();
-	mSpriteVerts->SetActive();
+	mSpriteVerts->Bind();
 
 	for (auto sprite : mSprites)
 	{

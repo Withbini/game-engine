@@ -4,9 +4,8 @@
 class GL3DGame
 	:public Game{
 public:
-	GL3DGame();
-	~GL3DGame() override;
+	GL3DGame() = default;
+	~GL3DGame() override = default;
 
 	void LoadData() override;
-private:
 };

@@ -177,7 +177,7 @@ private:
 			if (!success)
 			{
 				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-				SDL_Log("ERROR::SHADER_COMPILATION_ERROR of type: %s \n %s \n -- --------------------------------------------------- --\n", type, infoLog);
+				SDL_Log("ERROR::SHADER_COMPILATION_ERROR of type: %s \n %s \n -- --------------------------------------------------- --\n", type.c_str(), infoLog);
 			}
 		}
 		else
@@ -186,7 +186,7 @@ private:
 			if (!success)
 			{
 				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-				SDL_Log("ERROR::PROGRAM_LINKING_ERROR of type: %s \n %s \n -- --------------------------------------------------- --\n", type, infoLog);
+				SDL_Log("ERROR::PROGRAM_LINKING_ERROR of type: %s \n %s \n -- --------------------------------------------------- --\n", type.c_str(), infoLog);
 			}
 		}
 	}

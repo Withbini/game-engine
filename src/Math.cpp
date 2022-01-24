@@ -99,8 +99,6 @@ Vector3 Vector3::Transform(const Vector3& v, const Quaternion& q)
 void Matrix4::Invert()
 {
 	//TODO:improve matrix invert performance
-	// Thanks slow math
-	// This is a really janky way to unroll everything...
 	float tmp[12];
 	float src[16];
 	float dst[16];

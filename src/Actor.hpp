@@ -35,9 +35,8 @@ public:
 	Quaternion GetRotation() const { return mRotation; }
 	void SetRotation(const Quaternion rotation) { mRotation = rotation; mRecomputeWorldTransform = true; }
 
-	Vector3 GetForward() const { //시선방향으로 가기
-		return Vector3::Transform(Vector3::UnitX, mRotation);
-		}
+	Vector3 GetForward() const { return Vector3::Transform(Vector3::UnitX, mRotation);}
+	Vector3 GetRight() const { return Vector3::Transform(Vector3::UnitY, mRotation); }
 
 	class Game* GetGame() const { return mGame; }
 	void AddComponent(Component* comp);

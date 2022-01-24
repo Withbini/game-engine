@@ -149,11 +149,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\JB\source\repos\game\3rdParty\SDL2\include;C:\Users\JB\source\repos\game\3rdParty\SDL2_image\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\Users\JB\source\repos\game\3rdParty\SDL2_image\lib\x86;C:\Users\JB\source\repos\game\3rdParty\SDL2\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\glew\lib\Debug\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2_image.lib;SDL2main.lib;SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -163,12 +163,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)3rdParty\Exporter;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\glew\lib\Debug\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\glew\lib\Debug\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32d.lib;soil.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

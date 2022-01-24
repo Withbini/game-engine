@@ -28,10 +28,9 @@ void MeshComponent::Draw(Shader* shader)
 		shader->setFloat("specPower", mMesh->GetSpecPower());
 
 		Texture* t = mMesh->GetTexture(mTextureIdx);
-		if (t)
-			t->SetActive();
+		if (t) t->Bind();
 		VertexArray* va = mMesh->GetVertexArray();
-		va->SetActive();
+		va->Bind();
 		glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
 	}
 }

@@ -13,8 +13,7 @@ void main(){
 	vec4 pos = vec4(aPos,1.0)*world;
     fragWorldPos = pos.xyz;
 	gl_Position = pos*viewProj;
-	fragNormal = (vec4(aNor,0.0f)*world).xyz;
-	//fragNormal = aNor * inverse(transpose(mat3(world)));
+	fragNormal = aNor * inverse(transpose(mat3(world)));
 	
 	fragCoord=aTex;
 }

@@ -2,7 +2,6 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
-#include <rapidjson/writer.h>
 
 #include "Renderer.hpp"
 #include "VertexArray.hpp"
@@ -38,7 +37,7 @@ string Mesh::read(const string& path)
 	ss << file.rdbuf();
 	string res = ss.str();
 
-	SDL_Log("File read result: %s", res.c_str());
+	//SDL_Log("File read result: %s", res.c_str());
 	file.close();
 	return res;
 }
@@ -95,6 +94,11 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 	indices.reserve(index.Size() * 3);
 	for (SizeType i = 0; i < index.Size(); ++i)
 	{
+		if (!index[i].IsArray() || index[i].Size() != 3)
+		{
+			SDL_Log("Invalid indices for %s", file.c_str());
+			return false;
+		}
 		for (auto j = 0; j < 3; ++j)
 		{
 			indices.emplace_back(index[i][j].GetUint());

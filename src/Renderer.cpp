@@ -10,6 +10,8 @@ Renderer::Renderer(Game* game)
 	:mGame(game)
 	, mViewMatrix(Matrix4::Identity)
 	, mProjMatrix(Matrix4::Identity)
+	, mSpriteShader(nullptr)
+	, mSpriteVerts(nullptr)
 {
 }
 
@@ -45,8 +47,7 @@ bool Renderer::Initialize(float width, float height)
 
 	mContext = SDL_GL_CreateContext(mWindow);
 
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK)
+	glewExperimental = GL_TRUE;	if (glewInit() != GLEW_OK)
 	{
 		SDL_Log("Failed to initialize GLEW.");
 		return false;
@@ -81,16 +82,17 @@ void Renderer::UnloadData()
 		texture.second->UnLoad();
 		delete texture.second;
 	}
+	mTextures.clear();
 
-	for(auto meshes:mMeshes)
+	for (auto meshes : mMeshes)
 	{
 		meshes.second->UnLoad();
 		delete meshes.second;
 	}
-	mTextures.clear();
+	mMeshes.clear();
 }
 
-void Renderer::SetUniforms(Shader* shader)
+void Renderer::SetUniforms(Shader* shader) const
 {
 	Matrix4 invView = mViewMatrix;
 	invView.Invert();
@@ -113,35 +115,25 @@ void Renderer::Draw()
 	mMeshShader->use();
 	mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
 	SetUniforms(mMeshShader);
-	for(auto comp:mMeshComps)
+	for (auto comp : mMeshComps)
 	{
 		comp->Draw(mMeshShader);
 	}
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_BLEND_SRC, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+	//glBlendFunc(GL_BLEND_SRC, GL_ONE_MINUS_SRC_ALPHA);
 
 	mSpriteShader->use();
-	mSpriteVerts->SetActive();
-	for(auto comp:mSprites)
+	mSpriteVerts->Bind();
+	for (auto comp : mSprites)
 	{
 		comp->Draw(mSpriteShader);
 	}
-	
-	SDL_GL_SwapWindow(mWindow);
-}
 
-Mesh* Renderer::GetMesh(const std::string& fileName)
-{
-	const auto meshFromFile = mMeshes.find(fileName);
-	if (meshFromFile == mMeshes.end()) {
-		auto* mesh = new Mesh();
-		mesh->Load(fileName, mGame->GetRenderer());
-		mMeshes.insert({ fileName, mesh });
-		return mesh;
-	}
-	return meshFromFile->second;
+	SDL_GL_SwapWindow(mWindow);
 }
 
 void Renderer::CreateSpriteVerts()
@@ -167,13 +159,12 @@ bool Renderer::LoadShaders()
 	mSpriteShader->use();
 	Matrix4 viewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
 	mSpriteShader->setMat4("viewProj", viewProj);
-	
-	mMeshShader = new Shader("src/Shader/Basic.vert", "src/Shader/Basic.frag");
+
+	mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/Phong.frag");
 	mMeshShader->use();
 	mViewMatrix = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
-	
-	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 25.0f, 1000.f);
-	mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
+	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 25.0f, 10000.f);
+	mMeshShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
 	return true;
 }
 
@@ -187,6 +178,18 @@ Texture* Renderer::GetTexture(const std::string& fileName)
 		return texture;
 	}
 	return textureFromFile->second;
+}
+
+Mesh* Renderer::GetMesh(const std::string& fileName)
+{
+	const auto meshFromFile = mMeshes.find(fileName);
+	if (meshFromFile == mMeshes.end()) {
+		auto* mesh = new Mesh();
+		mesh->Load(fileName, this);
+		mMeshes.insert({ fileName, mesh });
+		return mesh;
+	}
+	return meshFromFile->second;
 }
 
 void Renderer::AddSprite(SpriteComponent* sprite)

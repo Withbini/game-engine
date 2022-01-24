@@ -13,23 +13,18 @@ void MoveComponent::Update(float deltaTime)
 {
 	if (!Math::NearZero(mAngularSpeed))
 	{
-		const auto rotation = mOwner->GetRotation();
-		const float angle = mAngularSpeed * deltaTime;
-		auto newRot = Quaternion(Vector3::UnitZ, angle);
-		Quaternion::Concatenate(rotation, newRot);
-		mOwner->SetRotation(newRot);
+		Quaternion rot = mOwner->GetRotation();
+		float angle = mAngularSpeed * deltaTime;
+		Quaternion inc(Vector3::UnitZ, angle);
+		rot = Quaternion::Concatenate(rot, inc);
+		mOwner->SetRotation(rot);
 	}
-	
-	if (!Math::NearZero(mForwardSpeed))
+
+	if (!Math::NearZero(mForwardSpeed) || !Math::NearZero(mStrafeSpeed))
 	{
 		Vector3 pos = mOwner->GetPosition();
 		pos += mOwner->GetForward() * mForwardSpeed * deltaTime;
-
-		if (pos.x <= -640.0f) { pos.x = -640.f; }
-		else if (pos.x >= 640.0f) { pos.x = 640.0f; }
-
-		if (pos.y <= -360.0f) { pos.y = -360.0f; }
-		else if (pos.y >= 360.0f) { pos.y = 360.0f; }
+		pos += mOwner->GetRight() * mStrafeSpeed * deltaTime;
 
 		mOwner->SetPosition(pos);
 	}

@@ -8,6 +8,5 @@ uniform mat4 world;
 out vec2 texCoord;
 void main(){
 	gl_Position = vec4(aPos,1.0)*world*viewProj;
-	//gl_Position = vec4(aPos,1.0);
 	texCoord=aTex;
 }
