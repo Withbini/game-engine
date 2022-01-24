@@ -6,6 +6,9 @@
 #include "Texture.hpp"
 #include "SpriteComponent.hpp"
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_opengl3.h>
+#include <imgui/imgui_impl_sdl.h>
 Renderer::Renderer(Game* game)
 	:mGame(game)
 	, mViewMatrix(Matrix4::Identity)
@@ -53,6 +56,19 @@ bool Renderer::Initialize(float width, float height)
 		return false;
 	}
 
+	//imgui
+	//TODO:introduce imgui
+	/*const auto imguiContext = ImGui::CreateContext();
+	ImGui::SetCurrentContext(imguiContext);
+	if(ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
+	{
+		SDL_Log("Failed to initialize IMGUI.");
+		return false;
+	}
+	ImGui_ImplOpenGL3_Init();
+	ImGui_ImplOpenGL3_CreateFontsTexture();
+	ImGui_ImplOpenGL3_CreateDeviceObjects();*/
+	
 	glGetError();
 
 	if (!LoadShaders())

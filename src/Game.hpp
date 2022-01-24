@@ -54,5 +54,5 @@ protected:
 	bool mUpdatingActors;
 
 	class Renderer* mRenderer;
-	class CameraActor* mCameraActor;
+	class FPSActor* mCameraActor;
 };

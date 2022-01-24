@@ -1,5 +1,5 @@
 #include "3dGame.hpp"
-#include "CameraActor.hpp"
+#include "FPSActor.hpp"
 #include "MeshComponent.hpp"
 #include "PlaneActor.hpp"
 #include "SpriteComponent.hpp"
@@ -67,7 +67,7 @@ void GL3DGame::LoadData()
 	dir.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
 
 	// Camera actor
-	mCameraActor = new CameraActor(this);
+	mCameraActor = new FPSActor(this);
 
 	// UI elements
 	a = new Actor(this);
@@ -80,4 +80,7 @@ void GL3DGame::LoadData()
 	a->SetScale(0.75f);
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
+
+	SDL_SetRelativeMouseMode(SDL_TRUE);
+	SDL_GetRelativeMouseState(nullptr, nullptr);
 }

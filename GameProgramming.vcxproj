@@ -29,9 +29,11 @@
     <ClCompile Include="src\Actor.cpp" />
     <ClCompile Include="src\AnimSpriteComponent.cpp" />
     <ClCompile Include="src\BGSpriteComponent.cpp" />
-    <ClCompile Include="src\CameraActor.cpp" />
+    <ClCompile Include="src\CameraComponent.cpp" />
+    <ClCompile Include="src\FPSActor.cpp" />
     <ClCompile Include="src\CircleComponent.cpp" />
     <ClCompile Include="src\Component.cpp" />
+    <ClCompile Include="src\FPSCamera.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\InputComponent.cpp" />
     <ClCompile Include="src\Laser.cpp" />
@@ -59,9 +61,11 @@
     <ClInclude Include="src\Actor.hpp" />
     <ClInclude Include="src\AnimSpriteComponent.hpp" />
     <ClInclude Include="src\BGSpriteComponent.hpp" />
-    <ClInclude Include="src\CameraActor.hpp" />
+    <ClInclude Include="src\CameraComponent.hpp" />
+    <ClInclude Include="src\FPSActor.hpp" />
     <ClInclude Include="src\CircleComponent.hpp" />
     <ClInclude Include="src\Component.hpp" />
+    <ClInclude Include="src\FPSCamera.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\InputComponent.hpp" />
     <ClInclude Include="src\Laser.hpp" />
@@ -149,7 +153,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)3rdParty\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

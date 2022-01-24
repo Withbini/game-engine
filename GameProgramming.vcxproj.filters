@@ -101,9 +101,6 @@
     <ClCompile Include="src\openglRenderer.cpp">
       <Filter>소스 파일\example\chapter5</Filter>
     </ClCompile>
-    <ClCompile Include="src\CameraActor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="src\MeshComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -111,6 +108,15 @@
       <Filter>소스 파일\example\chapter6</Filter>
     </ClCompile>
     <ClCompile Include="src\PlaneActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FPSActor.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CameraComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FPSCamera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -187,9 +193,6 @@
     <ClInclude Include="src\openglRenderer.hpp">
       <Filter>소스 파일\example\chapter5</Filter>
     </ClInclude>
-    <ClInclude Include="src\CameraActor.hpp">
-      <Filter>소스 파일</Filter>
-    </ClInclude>
     <ClInclude Include="src\MeshComponent.hpp">
       <Filter>소스 파일</Filter>
     </ClInclude>
@@ -197,6 +200,15 @@
       <Filter>소스 파일\example\chapter6</Filter>
     </ClInclude>
     <ClInclude Include="src\PlaneActor.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FPSActor.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CameraComponent.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FPSCamera.hpp">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
