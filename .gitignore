@@ -38,3 +38,6 @@ Assets/*
 3rdParty/*
 .vs/*
 *.sln
+
+imgui*
+imgui/*

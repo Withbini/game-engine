@@ -14,6 +14,6 @@ void main(){
     fragWorldPos = pos.xyz;
 	gl_Position = pos*viewProj;
 	fragNormal = aNor * inverse(transpose(mat3(world)));
-	
+	//fragNormal = aNor * mat3(world);
 	fragCoord=aTex;
 }

@@ -76,4 +76,7 @@ protected:
 	Vector3 mAmbient;
 	Vector3 mLightColor;
 	float mSpecPower = 20.f;
+
+	//imgui
+	struct ImGuiContext* mImGuiContext;
 };

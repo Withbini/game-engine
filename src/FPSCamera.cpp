@@ -4,7 +4,7 @@
 FPSCamera::FPSCamera(class Actor* owner)
 	:CameraComponent(owner)
 	, mPitch(0)
-	, mMaxPitch(Math::Pi)
+	, mMaxPitch(Math::Pi /3.f)
 	, mPitchSpeed(0.f)
 {
 }
@@ -14,7 +14,7 @@ void FPSCamera::Update(float deltaTime)
 	Vector3 cameraPos = mOwner->GetPosition();
 	CameraComponent::Update(deltaTime);
 	mPitch += mPitchSpeed * deltaTime;
-	Math::Clamp(mPitch, -mMaxPitch, mMaxPitch);
+	mPitch = Math::Clamp(mPitch, -mMaxPitch, mMaxPitch);
 
 	Quaternion q(mOwner->GetRight(), mPitch); //direction and angle
 	Vector3 viewForward = Vector3::Transform(mOwner->GetForward(), q);

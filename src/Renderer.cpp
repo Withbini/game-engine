@@ -6,9 +6,9 @@
 #include "Texture.hpp"
 #include "SpriteComponent.hpp"
 
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_opengl3.h>
-#include <imgui/imgui_impl_sdl.h>
+#include "../imgui/imgui.h"
+#include <../imgui/imgui_impl_opengl3.h>
+#include <../imgui/imgui_impl_sdl.h>
 Renderer::Renderer(Game* game)
 	:mGame(game)
 	, mViewMatrix(Matrix4::Identity)
@@ -30,7 +30,7 @@ bool Renderer::Initialize(float width, float height)
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -56,18 +56,17 @@ bool Renderer::Initialize(float width, float height)
 		return false;
 	}
 
-	//imgui
 	//TODO:introduce imgui
-	/*const auto imguiContext = ImGui::CreateContext();
-	ImGui::SetCurrentContext(imguiContext);
-	if(ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
+	mImGuiContext = ImGui::CreateContext();
+	ImGui::SetCurrentContext(mImGuiContext);
+	if(!ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
 	{
 		SDL_Log("Failed to initialize IMGUI.");
 		return false;
 	}
 	ImGui_ImplOpenGL3_Init();
 	ImGui_ImplOpenGL3_CreateFontsTexture();
-	ImGui_ImplOpenGL3_CreateDeviceObjects();*/
+	ImGui_ImplOpenGL3_CreateDeviceObjects();
 	
 	glGetError();
 
@@ -84,6 +83,12 @@ bool Renderer::Initialize(float width, float height)
 
 void Renderer::Shutdown()
 {
+	ImGui_ImplOpenGL3_DestroyFontsTexture();
+	ImGui_ImplOpenGL3_DestroyDeviceObjects();
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext(mImGuiContext);
+
 	delete mSpriteVerts;
 	delete mSpriteShader;
 	delete mMeshShader;
@@ -123,6 +128,17 @@ void Renderer::SetUniforms(Shader* shader) const
 
 void Renderer::Draw()
 {
+	//explicit imgui new frame
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	if(ImGui::Begin("first~~"))
+	{
+		ImGui::Text("THIS is first");
+		ImGui::Separator();
+	}
+	ImGui::End();
+
 	glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -148,6 +164,10 @@ void Renderer::Draw()
 	{
 		comp->Draw(mSpriteShader);
 	}
+
+	//render imgui objects
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(mWindow);
 }

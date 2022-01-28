@@ -12,5 +12,7 @@ public:
 private:
 	class MoveComponent* mMoveComp;
 	class FPSCamera* mCamera;
+	class FollowCamera* mFollowCamera;
+	class FPSModel* mFPSModel;
 };
 

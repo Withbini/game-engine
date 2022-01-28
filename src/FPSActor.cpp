@@ -3,17 +3,38 @@
 #include "Game.hpp"
 #include "MoveComponent.hpp"
 #include "FPSCamera.hpp"
+#include "FPSModel.hpp"
+#include "FollowCamera.hpp"
 
 FPSActor::FPSActor(Game* game)
 	:Actor(game)
 {
 	mMoveComp = new MoveComponent(this);
 	mCamera = new FPSCamera(this);
+	mCamera->SetVisible(true);
+	mFollowCamera = new FollowCamera(this);
+
+	mFPSModel = new FPSModel(this->GetGame());
+	mFPSModel->Load("Assets/rifle.gpmesh");
+	mFPSModel->SetVisible(true);
 }
 
 void FPSActor::UpdateActor(float deltaTime)
 {
 	Actor::UpdateActor(deltaTime);
+
+	//if (mFPSModel->GetVisible()) {
+		const Vector3 modelPosOffset(10.f, 25.f, -10.f);
+		Vector3 modelPos = GetPosition();
+		modelPos += GetForward() * modelPosOffset.x;
+		modelPos += GetRight() * modelPosOffset.y;
+		modelPos.z += modelPosOffset.z;
+		mFPSModel->SetPosition(modelPos);
+
+		Quaternion q = GetRotation();
+		q = Quaternion::Concatenate(q, Quaternion(GetRight(), mCamera->GetPitch()));
+		mFPSModel->SetRotation(q);
+	//}
 }
 
 void FPSActor::ActorInput(const uint8_t* keyState)
@@ -23,19 +44,31 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 
 	if (keyState[SDL_SCANCODE_W])
 	{
-		forwardSpeed += 300.0f;
+		forwardSpeed += 400.0f;
 	}
 	if (keyState[SDL_SCANCODE_S])
 	{
-		forwardSpeed -= 300.0f;
+		forwardSpeed -= 400.0f;
 	}
 	if (keyState[SDL_SCANCODE_A])
 	{
-		strafeSpeed -= 300.0f;
+		strafeSpeed -= 400.0f;
 	}
 	if (keyState[SDL_SCANCODE_D])
 	{
-		strafeSpeed += 300.0f;
+		strafeSpeed += 400.0f;
+	}
+	if(keyState[SDL_SCANCODE_1])
+	{
+		mCamera->SetVisible(true);
+		mFPSModel->SetVisible(true);
+		mFollowCamera->SetVisible(false);
+	}
+	else if (keyState[SDL_SCANCODE_2])
+	{
+		mCamera->SetVisible(false);
+		mFPSModel->SetVisible(false);
+		mFollowCamera->SetVisible(true);
 	}
 
 	mMoveComp->SetForwardSpeed(forwardSpeed);
