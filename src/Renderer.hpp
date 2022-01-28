@@ -49,6 +49,8 @@ public:
 	void SetAmbientLight(const Vector3& ambient) {mAmbient = ambient;}
 	Vector3 GetLightColor() const {return mLightColor;}
 	void SetLightColor(const Vector3& color) {mLightColor =color;}
+
+	Vector3 Unproject(const Vector3& screenPoint) const;
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();

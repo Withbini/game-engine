@@ -19,7 +19,7 @@ void CameraComponent::SetVisible(bool visible)
 void CameraComponent::SetViewMatrix(const Matrix4& view)
 {
 	if (mVisible) {
-		Game*game = mOwner->GetGame();
+		Game* game = mOwner->GetGame();
 		game->GetRenderer()->SetViewMatrix(view);
 	}
 }

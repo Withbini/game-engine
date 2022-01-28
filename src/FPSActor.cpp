@@ -5,6 +5,7 @@
 #include "FPSCamera.hpp"
 #include "FPSModel.hpp"
 #include "FollowCamera.hpp"
+#include "OrbitCamera.hpp"
 
 FPSActor::FPSActor(Game* game)
 	:Actor(game)
@@ -13,28 +14,26 @@ FPSActor::FPSActor(Game* game)
 	mCamera = new FPSCamera(this);
 	mCamera->SetVisible(true);
 	mFollowCamera = new FollowCamera(this);
+	mOrbitCamera = new OrbitCamera(this);
 
 	mFPSModel = new FPSModel(this->GetGame());
 	mFPSModel->Load("Assets/rifle.gpmesh");
-	mFPSModel->SetVisible(true);
 }
 
 void FPSActor::UpdateActor(float deltaTime)
 {
 	Actor::UpdateActor(deltaTime);
 
-	//if (mFPSModel->GetVisible()) {
-		const Vector3 modelPosOffset(10.f, 25.f, -10.f);
-		Vector3 modelPos = GetPosition();
-		modelPos += GetForward() * modelPosOffset.x;
-		modelPos += GetRight() * modelPosOffset.y;
-		modelPos.z += modelPosOffset.z;
-		mFPSModel->SetPosition(modelPos);
+	const Vector3 modelPosOffset(10.f, 25.f, -10.f);
+	Vector3 modelPos = GetPosition();
+	modelPos += GetForward() * modelPosOffset.x;
+	modelPos += GetRight() * modelPosOffset.y;
+	modelPos.z += modelPosOffset.z;
+	mFPSModel->SetPosition(modelPos);
 
-		Quaternion q = GetRotation();
-		q = Quaternion::Concatenate(q, Quaternion(GetRight(), mCamera->GetPitch()));
-		mFPSModel->SetRotation(q);
-	//}
+	Quaternion q = GetRotation();
+	q = Quaternion::Concatenate(q, Quaternion(GetRight(), mCamera->GetPitch()));
+	mFPSModel->SetRotation(q);
 }
 
 void FPSActor::ActorInput(const uint8_t* keyState)
@@ -58,24 +57,34 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 	{
 		strafeSpeed += 400.0f;
 	}
+	//TODO: move to another class
 	if(keyState[SDL_SCANCODE_1])
 	{
 		mCamera->SetVisible(true);
-		mFPSModel->SetVisible(true);
+		mFPSModel->SetState(EActive);
 		mFollowCamera->SetVisible(false);
+		mOrbitCamera->SetVisible(false);
 	}
 	else if (keyState[SDL_SCANCODE_2])
 	{
 		mCamera->SetVisible(false);
-		mFPSModel->SetVisible(false);
+		mFPSModel->SetState(EPause);
 		mFollowCamera->SetVisible(true);
+		mOrbitCamera->SetVisible(false);
+	}
+	else if (keyState[SDL_SCANCODE_3])
+	{
+		mCamera->SetVisible(false);
+		mFPSModel->SetState(EPause);
+		mFollowCamera->SetVisible(false);
+		mOrbitCamera->SetVisible(true);
 	}
 
 	mMoveComp->SetForwardSpeed(forwardSpeed);
 	mMoveComp->SetStrafeSpeed(strafeSpeed);
 
 	int x, y;
-	SDL_GetRelativeMouseState(&x, &y);
+	auto button = SDL_GetRelativeMouseState(&x, &y);
 
 	const int maxMouseSpeed = 500;
 	const float maxAngularSpeed = Math::Pi * 8;
@@ -86,6 +95,8 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 		angularSpeed *= maxAngularSpeed;
 	}
 	mMoveComp->SetAngularSpeed(angularSpeed);
+	if(button & SDL_BUTTON(SDL_BUTTON_RIGHT))
+		mOrbitCamera->SetYawSpeed(angularSpeed);
 
 	const float maxPitchSpeed = Math::Pi * 8;
 	float pitchSpeed = 0.f;
@@ -95,4 +106,6 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 		pitchSpeed *= maxPitchSpeed;
 	}
 	mCamera->SetPitchSpeed(pitchSpeed);
+	if (button & SDL_BUTTON(SDL_BUTTON_RIGHT))
+	mOrbitCamera->SetPitchSpeed(pitchSpeed);
 }

@@ -59,7 +59,7 @@ bool Renderer::Initialize(float width, float height)
 	//TODO:introduce imgui
 	mImGuiContext = ImGui::CreateContext();
 	ImGui::SetCurrentContext(mImGuiContext);
-	if(!ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
+	if (!ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
 	{
 		SDL_Log("Failed to initialize IMGUI.");
 		return false;
@@ -67,7 +67,7 @@ bool Renderer::Initialize(float width, float height)
 	ImGui_ImplOpenGL3_Init();
 	ImGui_ImplOpenGL3_CreateFontsTexture();
 	ImGui_ImplOpenGL3_CreateDeviceObjects();
-	
+
 	glGetError();
 
 	if (!LoadShaders())
@@ -132,7 +132,7 @@ void Renderer::Draw()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	if(ImGui::Begin("first~~"))
+	if (ImGui::Begin("first~~"))
 	{
 		ImGui::Text("THIS is first");
 		ImGui::Separator();
@@ -170,6 +170,16 @@ void Renderer::Draw()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(mWindow);
+}
+
+Vector3 Renderer::Unproject(const Vector3& screenPoint) const
+{
+	Vector3 nDC = screenPoint;
+	nDC.x /= mScreenWidth*0.5f;
+	nDC.y /= mScreenHeight*0.5f;
+	Matrix4 mat = mViewMatrix * mProjMatrix;
+	mat.Invert();
+	return Vector3::TransformWithPerspDiv(nDC, mat);
 }
 
 void Renderer::CreateSpriteVerts()

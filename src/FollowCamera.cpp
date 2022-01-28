@@ -5,7 +5,7 @@
 FollowCamera::FollowCamera(Actor* owner)
 	:CameraComponent(owner)
 	, mHorzDist(350.0f)
-	, mVertDist(500.0f)
+	, mVertDist(150.0f)
 	, mTargetDist(100.0f)
 	, mSpringConstant(64.0f)
 {
@@ -13,10 +13,20 @@ FollowCamera::FollowCamera(Actor* owner)
 
 void FollowCamera::Update(float deltaTime)
 {
+	CameraComponent::Update(deltaTime);
+
+	float dampening = 2 * Math::Sqrt(mSpringConstant);
+
+	Vector3 idealPos = GetCameraPos();
+	Vector3 diff = mActualPos - idealPos;
+	Vector3 accel = -mSpringConstant * diff - dampening * mVelocity;
+
+	mVelocity += accel * deltaTime;
+	mActualPos += mVelocity * deltaTime;
+
 	Matrix4 view;
-	Vector3 cameraPos = GetCameraPos();
 	Vector3 target = mOwner->GetPosition() + mOwner->GetForward()* mTargetDist;
-	view = Matrix4::CreateLookAt(cameraPos, target, Vector3::UnitZ);
+	view = Matrix4::CreateLookAt(mActualPos, target, Vector3::UnitZ);
 	SetViewMatrix(view);
 }
 

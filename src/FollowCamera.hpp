@@ -17,7 +17,10 @@ private:
 	float mVertDist;
 	float mTargetDist;
 
+	//to represent more realistic
 	float mSpringConstant;
+	Vector3 mVelocity;
+	Vector3 mActualPos;
 	Vector3 GetCameraPos() const;
 };
 

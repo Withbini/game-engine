@@ -52,6 +52,7 @@
     <ClCompile Include="src\MeshComponent.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\openglRenderer.cpp" />
+    <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\PlaneActor.cpp" />
     <ClCompile Include="src\Random.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -94,6 +95,7 @@
     <ClInclude Include="src\MeshComponent.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\openglRenderer.hpp" />
+    <ClInclude Include="src\OrbitCamera.hpp" />
     <ClInclude Include="src\PlaneActor.hpp" />
     <ClInclude Include="src\Random.hpp" />
     <ClInclude Include="src\Renderer.hpp" />

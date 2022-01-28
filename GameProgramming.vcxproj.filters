@@ -149,6 +149,9 @@
     <ClCompile Include="src\FollowCamera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="src\OrbitCamera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="example\Ship.hpp">
@@ -272,6 +275,9 @@
       <Filter>소스 파일\imgui</Filter>
     </ClInclude>
     <ClInclude Include="src\FollowCamera.hpp">
+      <Filter>소스 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="src\OrbitCamera.hpp">
       <Filter>소스 파일</Filter>
     </ClInclude>
   </ItemGroup>
