@@ -2,6 +2,7 @@
 #include "FPSActor.hpp"
 #include "MeshComponent.hpp"
 #include "PlaneActor.hpp"
+#include "SplineActor.hpp"
 #include "SpriteComponent.hpp"
 
 void GL3DGame::LoadData()
@@ -68,19 +69,54 @@ void GL3DGame::LoadData()
 
 	// Camera actor
 	mCameraActor = new FPSActor(this);
+	mSplineActor = new SplineActor(this);
 
 	// UI elements
 	a = new Actor(this);
-	a->SetPosition(Vector3(-350.0f, -350.0f, 0.0f));
+	a->SetPosition(Vector3(-350.0f, -250.0f, 0.0f));
 	SpriteComponent* sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/HealthBar.png"));
 
 	a = new Actor(this);
-	a->SetPosition(Vector3(375.0f, -275.0f, 0.0f));
+	a->SetPosition(Vector3(375.0f, -255.0f, 0.0f));
 	a->SetScale(0.75f);
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
 
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	SDL_GetRelativeMouseState(nullptr, nullptr);
+}
+
+void GL3DGame::ChangeCamera(uint8_t keyState)
+{
+
+	//TODO: move to another class
+	if (keyState[SDL_SCANCODE_1])
+	{
+		mCamera->SetVisible(true);
+		mFPSModel->SetState(EActive);
+		mFollowCamera->SetVisible(false);
+		mOrbitCamera->SetVisible(false);
+	}
+	else if (keyState[SDL_SCANCODE_2])
+	{
+		mCamera->SetVisible(false);
+		mFPSModel->SetState(EPause);
+		mFollowCamera->SetVisible(true);
+		mOrbitCamera->SetVisible(false);
+	}
+	else if (keyState[SDL_SCANCODE_3])
+	{
+		mCamera->SetVisible(false);
+		mFPSModel->SetState(EPause);
+		mFollowCamera->SetVisible(false);
+		mOrbitCamera->SetVisible(true);
+	}
+	else if (keyState[SDL_SCANCODE_4])
+	{
+		mCamera->SetVisible(false);
+		mFPSModel->SetState(EPause);
+		mFollowCamera->SetVisible(false);
+		mOrbitCamera->SetVisible(false);
+	}
 }

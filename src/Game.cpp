@@ -105,7 +105,7 @@ void Game::ProcessInput()
 		mIsRunning = false;
 
 	mUpdatingActors = true;
-	for (auto actor : mActors)
+	for (auto* actor : mActors)
 		actor->ProcessInput(state);
 	mUpdatingActors = false;
 }
@@ -143,12 +143,15 @@ void Game::UpdateGame()
 		}
 	}
 
-	for (auto &actor : deadActors)
+	for (auto* actor : deadActors)
 	{
 		delete actor;
 	}
 }
 
+void Game::ChangeCamera(uint8_t keyState)
+{
+}
 void Game::GenerateOutput() const
 {
 	mRenderer->Draw();

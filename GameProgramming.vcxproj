@@ -37,6 +37,7 @@
     <ClCompile Include="src\AnimSpriteComponent.cpp" />
     <ClCompile Include="src\BGSpriteComponent.cpp" />
     <ClCompile Include="src\CameraComponent.cpp" />
+    <ClCompile Include="src\FollowActor.cpp" />
     <ClCompile Include="src\FollowCamera.cpp" />
     <ClCompile Include="src\FPSActor.cpp" />
     <ClCompile Include="src\CircleComponent.cpp" />
@@ -52,10 +53,13 @@
     <ClCompile Include="src\MeshComponent.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\openglRenderer.cpp" />
+    <ClCompile Include="src\OrbitActor.cpp" />
     <ClCompile Include="src\OrbitCamera.cpp" />
     <ClCompile Include="src\PlaneActor.cpp" />
     <ClCompile Include="src\Random.cpp" />
     <ClCompile Include="src\Renderer.cpp" />
+    <ClCompile Include="src\SplineActor.cpp" />
+    <ClCompile Include="src\SplineCamera.cpp" />
     <ClCompile Include="src\SpriteComponent.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
@@ -81,6 +85,7 @@
     <ClInclude Include="src\AnimSpriteComponent.hpp" />
     <ClInclude Include="src\BGSpriteComponent.hpp" />
     <ClInclude Include="src\CameraComponent.hpp" />
+    <ClInclude Include="src\FollowActor.hpp" />
     <ClInclude Include="src\FollowCamera.hpp" />
     <ClInclude Include="src\FPSActor.hpp" />
     <ClInclude Include="src\CircleComponent.hpp" />
@@ -95,11 +100,14 @@
     <ClInclude Include="src\MeshComponent.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\openglRenderer.hpp" />
+    <ClInclude Include="src\OrbitActor.hpp" />
     <ClInclude Include="src\OrbitCamera.hpp" />
     <ClInclude Include="src\PlaneActor.hpp" />
     <ClInclude Include="src\Random.hpp" />
     <ClInclude Include="src\Renderer.hpp" />
     <ClInclude Include="src\shader\Shader.hpp" />
+    <ClInclude Include="src\SplineActor.hpp" />
+    <ClInclude Include="src\SplineCamera.hpp" />
     <ClInclude Include="src\SpriteComponent.hpp" />
     <ClInclude Include="src\Texture.hpp" />
     <ClInclude Include="src\VertexArray.hpp" />

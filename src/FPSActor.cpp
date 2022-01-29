@@ -6,14 +6,13 @@
 #include "FPSModel.hpp"
 #include "FollowCamera.hpp"
 #include "OrbitCamera.hpp"
+#include "SplineCamera.hpp"
 
 FPSActor::FPSActor(Game* game)
 	:Actor(game)
 {
 	mMoveComp = new MoveComponent(this);
 	mCamera = new FPSCamera(this);
-	mCamera->SetVisible(true);
-	mFollowCamera = new FollowCamera(this);
 	mOrbitCamera = new OrbitCamera(this);
 
 	mFPSModel = new FPSModel(this->GetGame());
@@ -56,28 +55,6 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 	if (keyState[SDL_SCANCODE_D])
 	{
 		strafeSpeed += 400.0f;
-	}
-	//TODO: move to another class
-	if(keyState[SDL_SCANCODE_1])
-	{
-		mCamera->SetVisible(true);
-		mFPSModel->SetState(EActive);
-		mFollowCamera->SetVisible(false);
-		mOrbitCamera->SetVisible(false);
-	}
-	else if (keyState[SDL_SCANCODE_2])
-	{
-		mCamera->SetVisible(false);
-		mFPSModel->SetState(EPause);
-		mFollowCamera->SetVisible(true);
-		mOrbitCamera->SetVisible(false);
-	}
-	else if (keyState[SDL_SCANCODE_3])
-	{
-		mCamera->SetVisible(false);
-		mFPSModel->SetState(EPause);
-		mFollowCamera->SetVisible(false);
-		mOrbitCamera->SetVisible(true);
 	}
 
 	mMoveComp->SetForwardSpeed(forwardSpeed);

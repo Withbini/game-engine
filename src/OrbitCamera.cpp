@@ -30,4 +30,7 @@ void OrbitCamera::Update(float deltaTime)
 	const Vector3 cameraPos = target + mOffset;
 	const Matrix4 view = Matrix4::CreateLookAt(cameraPos, target, mUp);
 	SetViewMatrix(view);
+
+	mYawSpeed *= 0.993f;
+	mPitchSpeed *= 0.993f;
 }

@@ -8,4 +8,8 @@ public:
 	~GL3DGame() override = default;
 
 	void LoadData() override;
+	void ChangeCamera(uint8_t keyState) override;
+private:
+	class FPSActor* mCameraActor;
+	class SplineActor* mSplineActor;
 };

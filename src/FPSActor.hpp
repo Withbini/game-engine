@@ -11,9 +11,10 @@ public:
 	void ActorInput(const uint8_t* keyState) override;
 private:
 	class MoveComponent* mMoveComp;
+	
 	class FPSCamera* mCamera;
+	class FPSModel* mFPSModel;
 	class FollowCamera* mFollowCamera;
 	class OrbitCamera* mOrbitCamera;
-	class FPSModel* mFPSModel;
 };
 

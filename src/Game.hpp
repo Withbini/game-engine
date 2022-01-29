@@ -38,10 +38,12 @@ private:
 
 	void UnloadData();
 	void UpdateGame();
+	
 protected:
 	virtual void ProcessInput();
 	virtual void LoadData();
 	void GenerateOutput() const;
+	virtual void ChangeCamera(uint8_t keyState);
 
 	bool mIsRunning;
 	uint32_t mTicksCount;
@@ -54,5 +56,4 @@ protected:
 	bool mUpdatingActors;
 
 	class Renderer* mRenderer;
-	class FPSActor* mCameraActor;
 };
