@@ -369,6 +369,12 @@
     <None Include="src\shader\GBuffer.frag">
       <Filter>Shader</Filter>
     </None>
+    <None Include="src\shader\GBufferPointLight.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\GBufferPointLight.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="imgui\LICENSE.txt">

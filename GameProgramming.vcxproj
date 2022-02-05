@@ -123,6 +123,8 @@
     <None Include="src\shader\GBuffer.frag" />
     <None Include="src\shader\GBufferGlobal.frag" />
     <None Include="src\shader\GBufferGlobal.vert" />
+    <None Include="src\shader\GBufferPointLight.frag" />
+    <None Include="src\shader\GBufferPointLight.vert" />
     <None Include="src\shader\Phong.frag" />
     <None Include="src\shader\Phong.vert" />
     <None Include="src\shader\Sprite.frag" />

@@ -128,9 +128,9 @@ void Renderer::SetUniforms(Shader* shader,Matrix4& view) const
 	shader->setVec3("cameraPos", invView.GetTranslation());
 	shader->setFloat("specPower", mSpecPower);
 
-	shader->setVec3("mDirLight.mDirection", mDirLight.mDirection);
-	shader->setVec3("mDirLight.mDiffuseColor", mDirLight.mDiffuseColor);
-	shader->setVec3("mDirLight.mSpecColor", mDirLight.mSpecColor);
+	shader->setVec3("dirLight.direction", mDirLight.mDirection);
+	shader->setVec3("dirLight.diffuseColor", mDirLight.mDiffuseColor);
+	shader->setVec3("dirLight.specColor", mDirLight.mSpecColor);
 }
 
 void Renderer::Draw()

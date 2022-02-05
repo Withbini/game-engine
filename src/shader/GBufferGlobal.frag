@@ -10,12 +10,12 @@ uniform vec3 cameraPos;
 uniform vec3 ambient;
 
 struct DirectionalLight{
-	vec3 mDirection;
-	vec3 mDiffuseColor;
-	vec3 mSpecColor;
+	vec3 direction;
+	vec3 diffuseColor;
+	vec3 specColor;
 };
 
-uniform DirectionalLight mDirLight;
+uniform DirectionalLight dirLight;
 
 void main(){
 	vec3 gbufferDiffuse = texture(gDiffuse,fragCoord).xyz;
@@ -23,16 +23,14 @@ void main(){
 	vec3 gbufferWorldPos = texture(gPosition,fragCoord).xyz;
 
 	vec3 N = normalize(gbufferNormal);
-	vec3 L = normalize(-mDirLight.mDirection);
+	vec3 L = normalize(-dirLight.direction);
 	vec3 V = normalize(cameraPos-gbufferWorldPos);
 	vec3 R = normalize(reflect(-L,N));
 	vec3 H = normalize(L+V);
 
 	float NdotL = dot(N,L);
 	vec3 Phong=ambient;
-	if(NdotL>0){
-		Phong+=NdotL*mDirLight.mDiffuseColor;
-	}
+	Phong+=max(dot(N,L),0.0f)*dirLight.diffuseColor;
 	//Phong =clamp(Phong,0.0,1.0);
 	outColor =vec4(gbufferDiffuse*Phong,1.0);
 }
