@@ -11,7 +11,7 @@ public:
 	static TexturePtr Create(int width,int height, uint32_t format, uint32_t type = GL_UNSIGNED_BYTE);
 	void SetFilter(uint32_t min, uint32_t mag) const;
 	void SetWrap(uint32_t sWrap, uint32_t tWrap) const;
-	void Bind(int index=0);
+	void Bind(int index=0) const;
 	
 	int GetWidth() const { return mWidth; }
 	int GetHeight() const { return mHeight; }

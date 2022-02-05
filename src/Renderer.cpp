@@ -59,7 +59,6 @@ bool Renderer::Initialize(float width, float height)
 	auto glVersion = glGetString(GL_VERSION);
 	SDL_Log("OpenGL context version: %s", glVersion);
 
-
 	mImGuiContext = ImGui::CreateContext();
 	ImGui::SetCurrentContext(mImGuiContext);
 	if (!ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
@@ -90,11 +89,11 @@ bool Renderer::Initialize(float width, float height)
 
 void Renderer::Shutdown()
 {
-	ImGui_ImplOpenGL3_DestroyFontsTexture();
+	/*ImGui_ImplOpenGL3_DestroyFontsTexture();
 	ImGui_ImplOpenGL3_DestroyDeviceObjects();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext(mImGuiContext);
+	ImGui::DestroyContext(mImGuiContext);*/
 
 	if(mGBuffer)
 	{
@@ -161,8 +160,6 @@ void Renderer::Draw()
 	}
 	ImGui::End();
 
-	//DrawScene(0, mViewMatrix, mProjMatrix);
-	//SetUniforms(mMeshShader, mViewMatrix);
 	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix,1.f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	DrawFromGBuffer();
@@ -179,7 +176,6 @@ void Renderer::Draw()
 		if (comp->GetVisible())
 			comp->Draw(mSpriteShader);
 	}
-
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

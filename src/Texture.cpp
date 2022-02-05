@@ -54,7 +54,7 @@ void Texture::SetWrap(uint32_t sWrap, uint32_t tWrap) const {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, tWrap);
 }
 
-void Texture::Bind(int index) 
+void Texture::Bind(int index) const
 {
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
@@ -73,7 +73,8 @@ void Texture::SetTextureFromImage(const Image* image) {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, format, GL_UNSIGNED_BYTE, image->GetData());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	//if(GLEW_EXT_texture_filter_anisotropic)
+	
+	if(GLAD_GL_EXT_texture_filter_anisotropic)
 	{
 		GLfloat largest;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY, &largest);
