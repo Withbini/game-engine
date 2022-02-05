@@ -1,6 +1,5 @@
 #include "openglGame.hpp"
 #include "Asteroid.hpp"
-#include "BGSpriteComponent.hpp"
 #include "openglRenderer.hpp"
 #include "Ship2.hpp"
 

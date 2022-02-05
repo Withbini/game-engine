@@ -2,6 +2,8 @@
 #include <string>
 #include <vector>
 
+#include "Texture.hpp"
+
 class Mesh
 {
 public:
@@ -12,7 +14,7 @@ public:
 	void UnLoad();
 	class VertexArray* GetVertexArray() const { return mVertexArray; }
 	const std::string& GetShader() const { return mShaderName; }
-	class Texture* GetTexture(size_t index);
+	TexturePtr GetTexture(size_t index);
 	float GetRadius() const { return mRadius; }
 	float GetSpecPower() const {return mSpecPower;}
 private:
@@ -21,7 +23,7 @@ private:
 	class VertexArray *mVertexArray;
 	std::string mShaderName;
 	float mRadius;
-	std::vector<class Texture*> mTextures;
+	std::vector<TexturePtr> mTextures;
 
 	float mSpecPower;
 };

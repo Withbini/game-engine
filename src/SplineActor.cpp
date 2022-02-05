@@ -56,3 +56,8 @@ void SplineActor::UpdateActor(float deltaTime)
 {
 	Actor::UpdateActor(deltaTime);
 }
+
+void SplineActor::ResetSpline() const
+{
+	mCamera->Reset();
+}

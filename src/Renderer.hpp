@@ -2,8 +2,8 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-#include <SDL.h>
 #include "Math.hpp"
+#include "Texture.hpp"
 
 //phong shader
 struct DirectionalLight {
@@ -22,6 +22,7 @@ public:
 	void Shutdown();
 	
 	virtual void Draw();
+	void DrawScene(unsigned int framebuffer,const Matrix4& view,const Matrix4& proj,float viewportScale=1.f);
 
 	void AddSprite(class SpriteComponent* sprite);
 	void RemoveSprite(class SpriteComponent* sprite);
@@ -29,14 +30,14 @@ public:
 	void AddMesh(class MeshComponent* sprite);
 	void RemoveMesh(class MeshComponent* sprite);
 
-	class Texture* GetTexture(const std::string& file);
+	TexturePtr GetTexture(const std::string& file);
 	class Mesh* GetMesh(const std::string& fileName);
 
 	float GetScreenWidth() const { return mScreenWidth; }
 	float GetScreenHeight() const { return mScreenHeight; }
 
 	void UnloadData();
-	void SetUniforms(class Shader* shader) const;
+	void SetUniforms(class Shader* shader,Matrix4& view) const;
 
 	Matrix4 GetViewMatrix() const {return mViewMatrix;}
 	//Matrix4 GetProjMatrix() const {return mProjMatrix;}
@@ -54,10 +55,11 @@ public:
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();
+	void DrawGBuffer();
 
 	class Game* mGame;
 	
-	std::unordered_map<std::string, class Texture*> mTextures;
+	std::unordered_map<std::string, TexturePtr> mTextures;
 	std::unordered_map<std::string, class Mesh*> mMeshes;
 	std::vector<class SpriteComponent*> mSprites;
 	std::vector<class MeshComponent*> mMeshComps;
@@ -81,4 +83,8 @@ protected:
 
 	//imgui
 	struct ImGuiContext* mImGuiContext;
+
+	//gbuffer
+	class GBuffer* mGBuffer;
+	class Shader* mGBufferShader;
 };

@@ -10,6 +10,7 @@ SpriteComponent::SpriteComponent(Actor* owner, int drawOrder)
 	,mDrawOrder(drawOrder)
 	,mTextureWidth(0)
 	,mTextureHeight(0)
+	,mVisible(true)
 {
 	mOwner->GetGame()->GetRenderer()->AddSprite(this);
 }
@@ -31,9 +32,9 @@ void SpriteComponent::Draw(Shader* shader)
 	}
 }
 
-void SpriteComponent::SetTexture(Texture* texture)
+void SpriteComponent::SetTexture(TexturePtr texture)
 {
 	mTexture = texture;
-	mTextureWidth = texture->GetWidth();
-	mTextureHeight = texture->GetHeight();
+	mTextureWidth = mTexture->GetWidth();
+	mTextureHeight = mTexture->GetHeight();
 }

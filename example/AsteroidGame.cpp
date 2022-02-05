@@ -1,6 +1,5 @@
 #include "AsteroidGame.hpp"
 #include "Asteroid.hpp"
-#include "BGSpriteComponent.hpp"
 #include "Ship2.hpp"
 
 void AsteroidGame::LoadData()

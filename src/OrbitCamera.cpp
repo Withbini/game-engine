@@ -2,10 +2,10 @@
 #include "Actor.hpp"
 OrbitCamera::OrbitCamera(class Actor* owner)
 	:CameraComponent(owner)
-	,mOffset(-400,0,0)
-	,mUp(0,0,1)
-	,mPitchSpeed(0)
-	,mYawSpeed(0)
+	, mOffset(-400, 0, 0)
+	, mUp(0, 0, 1)
+	, mPitchSpeed(0)
+	, mYawSpeed(0)
 {
 }
 

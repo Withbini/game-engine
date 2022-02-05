@@ -1,6 +1,9 @@
 #include "3dGame.hpp"
+
+#include "FollowActor.hpp"
 #include "FPSActor.hpp"
 #include "MeshComponent.hpp"
+#include "OrbitActor.hpp"
 #include "PlaneActor.hpp"
 #include "SplineActor.hpp"
 #include "SpriteComponent.hpp"
@@ -68,8 +71,10 @@ void GL3DGame::LoadData()
 	dir.mSpecColor = Vector3(0.8f, 0.8f, 0.8f);
 
 	// Camera actor
-	mCameraActor = new FPSActor(this);
+	mFPSActor = new FPSActor(this);
+	mFollowActor = new FollowActor(this);
 	mSplineActor = new SplineActor(this);
+	mOrbitActor = new OrbitActor(this);
 
 	// UI elements
 	a = new Actor(this);
@@ -83,40 +88,58 @@ void GL3DGame::LoadData()
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
 
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	SDL_GetRelativeMouseState(nullptr, nullptr);
+	ChangeCamera(1);
+
+	MouseMode(true);
 }
 
-void GL3DGame::ChangeCamera(uint8_t keyState)
+void GL3DGame::HandleKeyPress(SDL_KeyboardEvent* key)
 {
+	Game::HandleKeyPress(key);
+	switch (key->keysym.sym)
+	{
+		case '1':
+		case '2':
+		case '3':
+		case '4':
+			ChangeCamera(key->keysym.sym);
+			break;
+		default:
+			break;
+	}
+}
 
-	//TODO: move to another class
-	if (keyState[SDL_SCANCODE_1])
+void GL3DGame::ChangeCamera(int key)
+{
+	//by default
+	mFPSActor->SetState(Actor::EActive);
+	mFPSActor->SetVisible(true);
+	mFollowActor->SetState(Actor::EPause);
+	mSplineActor->SetState(Actor::EPause);
+	mOrbitActor->SetState(Actor::EPause);
+
+	switch (key)
 	{
-		mCamera->SetVisible(true);
-		mFPSModel->SetState(EActive);
-		mFollowCamera->SetVisible(false);
-		mOrbitCamera->SetVisible(false);
-	}
-	else if (keyState[SDL_SCANCODE_2])
-	{
-		mCamera->SetVisible(false);
-		mFPSModel->SetState(EPause);
-		mFollowCamera->SetVisible(true);
-		mOrbitCamera->SetVisible(false);
-	}
-	else if (keyState[SDL_SCANCODE_3])
-	{
-		mCamera->SetVisible(false);
-		mFPSModel->SetState(EPause);
-		mFollowCamera->SetVisible(false);
-		mOrbitCamera->SetVisible(true);
-	}
-	else if (keyState[SDL_SCANCODE_4])
-	{
-		mCamera->SetVisible(false);
-		mFPSModel->SetState(EPause);
-		mFollowCamera->SetVisible(false);
-		mOrbitCamera->SetVisible(false);
+	case '1':
+		mFPSActor->SetState(Actor::EActive);
+		break;
+	case '2':
+		mFPSActor->SetState(Actor::EPause);
+		mFollowActor->SetState(Actor::EActive);
+		mFPSActor->SetVisible(false);
+		break;
+	case '3':
+		mFPSActor->SetState(Actor::EPause);
+		mOrbitActor->SetState(Actor::EActive);
+		mFPSActor->SetVisible(false);
+		break;
+	case '4':
+		mFPSActor->SetState(Actor::EPause);
+		mSplineActor->SetState(Actor::EActive);
+		mSplineActor->ResetSpline();
+		mFPSActor->SetVisible(false);
+		break;
+	default:
+		break;
 	}
 }

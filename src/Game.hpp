@@ -33,6 +33,8 @@ public:
 	}
 
 	class Renderer* GetRenderer() const {return mRenderer;}
+	void MouseMode(bool on) const;
+	bool mMouseMode = { false };
 private:
 	std::vector<class Asteroid*>mAsteroid;
 
@@ -43,13 +45,13 @@ protected:
 	virtual void ProcessInput();
 	virtual void LoadData();
 	void GenerateOutput() const;
-	virtual void ChangeCamera(uint8_t keyState);
+	virtual void HandleKeyPress(SDL_KeyboardEvent* key);
 
 	bool mIsRunning;
 	uint32_t mTicksCount;
-	const int WINDOW_HEIGHT = 720;
-	const int WINDOW_WIDTH = 1280;
 
+	const int WINDOW_WIDTH = 1280;
+	const int WINDOW_HEIGHT = 720;
 	//actor
 	std::vector<Actor*>mActors;
 	std::vector<Actor*>mPendingActors;
