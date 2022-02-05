@@ -63,7 +63,7 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 	for (SizeType i = 0; i < textures.Size(); ++i)
 	{
 		const string & textureName = textures[i].GetString();
-		auto *t = renderer->GetTexture(textureName);
+		auto t = renderer->GetTexture(textureName);
 		if (t == nullptr)
 		{
 			t = renderer->GetTexture("Assets/Default.png");
@@ -104,7 +104,7 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 			indices.emplace_back(index[i][j].GetUint());
 		}
 	}
-	mVertexArray = new VertexArray(vertex.data(), vertex.size() / 8, indices.data(), static_cast<unsigned>(indices.size()));
+	mVertexArray = new VertexArray(vertex.data(), static_cast<unsigned int>(vertex.size()) / 8, indices.data(), static_cast<unsigned int>(indices.size()));
 	return true;
 }
 
@@ -114,7 +114,7 @@ void Mesh::UnLoad()
 	mVertexArray = nullptr;
 }
 
-Texture* Mesh::GetTexture(size_t index)
+TexturePtr Mesh::GetTexture(size_t index)
 {
 	if (index < mTextures.size())
 	{

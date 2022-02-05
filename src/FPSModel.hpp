@@ -7,9 +7,5 @@ class FPSModel :
 public:
 	FPSModel(class Game* game);
 	~FPSModel() override = default;
-
-	void Load(const std::string& s);
-private:
-	class MeshComponent* mMeshComp;
 };
 

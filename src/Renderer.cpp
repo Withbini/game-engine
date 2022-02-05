@@ -1,3 +1,4 @@
+#include "Common.hpp"
 #include "Game.hpp"
 #include "VertexArray.hpp"
 #include "Renderer.hpp"
@@ -6,9 +7,9 @@
 #include "Texture.hpp"
 #include "SpriteComponent.hpp"
 
-#include "../imgui/imgui.h"
-#include <../imgui/imgui_impl_opengl3.h>
-#include <../imgui/imgui_impl_sdl.h>
+#include "GBuffer.hpp"
+#include "Image.hpp"
+
 Renderer::Renderer(Game* game)
 	:mGame(game)
 	, mViewMatrix(Matrix4::Identity)
@@ -27,10 +28,11 @@ bool Renderer::Initialize(float width, float height)
 	mScreenWidth = width;
 	mScreenHeight = height;
 
+	constexpr int gl_major_version = 4;
+	constexpr int gl_minor_version = 5;
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, gl_major_version);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, gl_minor_version);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
 
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -50,13 +52,14 @@ bool Renderer::Initialize(float width, float height)
 
 	mContext = SDL_GL_CreateContext(mWindow);
 
-	glewExperimental = GL_TRUE;	if (glewInit() != GLEW_OK)
-	{
-		SDL_Log("Failed to initialize GLEW.");
+	if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
+		SDL_Log("Failed to initialize glad");
 		return false;
 	}
+	auto glVersion = glGetString(GL_VERSION);
+	SDL_Log("OpenGL context version: %s", glVersion);
 
-	//TODO:introduce imgui
+
 	mImGuiContext = ImGui::CreateContext();
 	ImGui::SetCurrentContext(mImGuiContext);
 	if (!ImGui_ImplSDL2_InitForOpenGL(mWindow, mContext))
@@ -68,8 +71,6 @@ bool Renderer::Initialize(float width, float height)
 	ImGui_ImplOpenGL3_CreateFontsTexture();
 	ImGui_ImplOpenGL3_CreateDeviceObjects();
 
-	glGetError();
-
 	if (!LoadShaders())
 	{
 		SDL_Log("Failed to load shaders.");
@@ -78,6 +79,12 @@ bool Renderer::Initialize(float width, float height)
 
 	CreateSpriteVerts();
 
+	mGBuffer = new GBuffer();
+	if(!mGBuffer->Create(static_cast<int>(width), static_cast<int>(height)))
+	{
+		SDL_Log("Failed to Creae gbuffer");
+		return false;
+	}
 	return true;
 }
 
@@ -89,20 +96,21 @@ void Renderer::Shutdown()
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext(mImGuiContext);
 
+	if(mGBuffer)
+	{
+		mGBuffer->Destroy();
+		delete mGBuffer;
+	}
 	delete mSpriteVerts;
 	delete mSpriteShader;
 	delete mMeshShader;
+	delete mGGlobalShader;
 	SDL_GL_DeleteContext(mContext);
 	SDL_DestroyWindow(mWindow);
 }
 
 void Renderer::UnloadData()
 {
-	for (auto texture : mTextures)
-	{
-		texture.second->UnLoad();
-		delete texture.second;
-	}
 	mTextures.clear();
 
 	for (auto meshes : mMeshes)
@@ -113,9 +121,9 @@ void Renderer::UnloadData()
 	mMeshes.clear();
 }
 
-void Renderer::SetUniforms(Shader* shader) const
+void Renderer::SetUniforms(Shader* shader,Matrix4& view) const
 {
-	Matrix4 invView = mViewMatrix;
+	Matrix4 invView = view;
 	invView.Invert();
 	shader->setVec3("ambient", mAmbient);
 	shader->setVec3("cameraPos", invView.GetTranslation());
@@ -139,47 +147,64 @@ void Renderer::Draw()
 	}
 	ImGui::End();
 
-	glClearColor(0.86f, 0.86f, 0.86f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-	mMeshShader->use();
-	mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
-	SetUniforms(mMeshShader);
-	for (auto comp : mMeshComps)
-	{
-		comp->Draw(mMeshShader);
+	if (ImGui::Begin("G-Buffers")) {
+		const char* bufferNames[] = {
+			"diffuse", "normal", "position",
+		};
+		static int bufferSelect = 0;
+		ImGui::Combo("buffer", &bufferSelect, bufferNames, 3);
+		
+		const float width = ImGui::GetContentRegionAvail().x;
+		const float height = width * (mScreenHeight / mScreenWidth);
+		ImGui::Image((ImTextureID)mGBuffer->GetTexture(bufferSelect)->GetTextureID(),
+			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
 	}
+	ImGui::End();
+
+	//DrawScene(0, mViewMatrix, mProjMatrix);
+	//SetUniforms(mMeshShader, mViewMatrix);
+	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix,1.f);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	DrawFromGBuffer();
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
 	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	//glBlendFunc(GL_BLEND_SRC, GL_ONE_MINUS_SRC_ALPHA);
 
-	mSpriteShader->use();
+	mSpriteShader->Bind();
 	mSpriteVerts->Bind();
 	for (auto comp : mSprites)
 	{
-		comp->Draw(mSpriteShader);
+		if (comp->GetVisible())
+			comp->Draw(mSpriteShader);
 	}
 
-	//render imgui objects
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	SDL_GL_SwapWindow(mWindow);
 }
 
-Vector3 Renderer::Unproject(const Vector3& screenPoint) const
+void Renderer::DrawScene(unsigned framebuffer, const Matrix4& view, const Matrix4& proj, float viewportScale)
 {
-	Vector3 nDC = screenPoint;
-	nDC.x /= mScreenWidth*0.5f;
-	nDC.y /= mScreenHeight*0.5f;
-	Matrix4 mat = mViewMatrix * mProjMatrix;
-	mat.Invert();
-	return Vector3::TransformWithPerspDiv(nDC, mat);
+	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	glViewport(0, 0, static_cast<int>(mScreenWidth*viewportScale), static_cast<int>(mScreenHeight*viewportScale));
+
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glDepthMask(GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	mMeshShader->Bind();
+	mMeshShader->setMat4("viewProj", view*proj);
+	//SetUniforms(mMeshShader,mViewMatrix);
+	for (auto comp : mMeshComps)
+	{
+		if (comp->GetVisible())
+			comp->Draw(mMeshShader);
+	}
 }
 
 void Renderer::CreateSpriteVerts()
@@ -202,26 +227,63 @@ void Renderer::CreateSpriteVerts()
 bool Renderer::LoadShaders()
 {
 	mSpriteShader = new Shader("src/Shader/Sprite.vert", "src/Shader/Sprite.frag");
-	mSpriteShader->use();
-	Matrix4 viewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
+	mSpriteShader->Bind();
+	const Matrix4 viewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
 	mSpriteShader->setMat4("viewProj", viewProj);
 
-	mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/Phong.frag");
-	mMeshShader->use();
+	mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/GBuffer.frag");
+	//mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/BlinPhong.frag");
+	mMeshShader->Bind();
 	mViewMatrix = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
 	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 25.0f, 10000.f);
 	mMeshShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
+
+	mGGlobalShader = new Shader("src/Shader/GBufferGlobal.vert", "src/Shader/GBufferGlobal.frag");
+	mGGlobalShader->Bind();
+	mGGlobalShader->setInt("gDiffuse", 0);
+	mGGlobalShader->setInt("gNormal", 1);
+	mGGlobalShader->setInt("gPosition", 2);
+	mGGlobalShader->setMat4("viewProj", viewProj);
+	const Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight,1.f);
+	mGGlobalShader->setMat4("world", gbufferWorld);
 	return true;
 }
 
-Texture* Renderer::GetTexture(const std::string& fileName)
+void Renderer::DrawFromGBuffer()
+{
+	glDisable(GL_DEPTH_TEST);
+	mGGlobalShader->Bind();
+	mSpriteVerts->Bind();
+	mGBuffer->SetTexturesActive();
+	SetUniforms(mGGlobalShader,mViewMatrix);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
+	int width = static_cast<int>(mScreenWidth);
+	int height = static_cast<int>(mScreenHeight);
+	glBlitFramebuffer(0, 0, width, height,
+		0, 0, width, height,
+		GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
+
+	mGBuffer->SetTexturesActive();
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE);*/
+}
+
+TexturePtr Renderer::GetTexture(const std::string& fileName)
 {
 	const auto textureFromFile = mTextures.find(fileName);
 	if (textureFromFile == mTextures.end()) {
-		auto* texture = new Texture();
-		texture->Load(fileName);
+		auto image = Image::Load(fileName);
+		auto texture = Texture::CreateFromImage(image.get());
 		mTextures.insert({ fileName, texture });
-		return texture;
+		
+		return mTextures.find(fileName)->second;
 	}
 	return textureFromFile->second;
 }
@@ -268,4 +330,14 @@ void Renderer::RemoveMesh(MeshComponent* mesh)
 	auto del = std::find(mMeshComps.begin(), mMeshComps.end(), mesh);
 	if (del != mMeshComps.end())
 		mMeshComps.erase(del);
+}
+
+Vector3 Renderer::Unproject(const Vector3& screenPoint) const
+{
+	Vector3 nDC = screenPoint;
+	nDC.x /= mScreenWidth * 0.5f;
+	nDC.y /= mScreenHeight * 0.5f;
+	Matrix4 mat = mViewMatrix * mProjMatrix;
+	mat.Invert();
+	return Vector3::TransformWithPerspDiv(nDC, mat);
 }

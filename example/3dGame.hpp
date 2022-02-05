@@ -8,8 +8,13 @@ public:
 	~GL3DGame() override = default;
 
 	void LoadData() override;
-	void ChangeCamera(uint8_t keyState) override;
+	void HandleKeyPress(SDL_KeyboardEvent* key) override;
+	
 private:
-	class FPSActor* mCameraActor;
+	void ChangeCamera(int key);
+
+	class FPSActor* mFPSActor;
 	class SplineActor* mSplineActor;
+	class FollowActor* mFollowActor;
+	class OrbitActor* mOrbitActor;
 };

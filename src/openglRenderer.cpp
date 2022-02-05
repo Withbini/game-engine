@@ -17,7 +17,7 @@ bool openglRenderer::LoadShaders()
 {
 	Renderer::LoadShaders();
 	mSpriteShader = new Shader("src/shader/Sprite.vert", "src/shader/Sprite.frag");
-	mSpriteShader->use();
+	mSpriteShader->Bind();
 	const Matrix4 viewProj = Matrix4::CreateSimpleViewProj(GetScreenWidth(), GetScreenHeight());
 	mSpriteShader->setMat4("view", viewProj);
 
@@ -38,7 +38,7 @@ void openglRenderer::Draw()
 	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	mSpriteShader->use();
+	mSpriteShader->Bind();
 	mSpriteVerts->Bind();
 
 	for (auto sprite : mSprites)

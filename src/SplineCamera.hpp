@@ -34,6 +34,7 @@ public:
 	void Update(float deltaTime) override;
 	void SetSpline(std::unique_ptr<Spline> path) { mPath = std::move(path); }
 	void SetPause(bool b) { mPause = b; }
+	void Reset();
 private:
 	std::unique_ptr<Spline> mPath;
 	float mT;

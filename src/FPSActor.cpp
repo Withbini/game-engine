@@ -4,19 +4,17 @@
 #include "MoveComponent.hpp"
 #include "FPSCamera.hpp"
 #include "FPSModel.hpp"
-#include "FollowCamera.hpp"
-#include "OrbitCamera.hpp"
-#include "SplineCamera.hpp"
+#include "MeshComponent.hpp"
 
 FPSActor::FPSActor(Game* game)
 	:Actor(game)
 {
-	mMoveComp = new MoveComponent(this);
+	mMove = new MoveComponent(this);
 	mCamera = new FPSCamera(this);
-	mOrbitCamera = new OrbitCamera(this);
 
-	mFPSModel = new FPSModel(this->GetGame());
-	mFPSModel->Load("Assets/rifle.gpmesh");
+	mFPSModel = new FPSModel(game);
+	mMesh = new MeshComponent(mFPSModel);
+	mMesh->SetMesh(GetGame()->GetRenderer()->GetMesh("Assets/rifle.gpmesh"));
 }
 
 void FPSActor::UpdateActor(float deltaTime)
@@ -57,11 +55,11 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 		strafeSpeed += 400.0f;
 	}
 
-	mMoveComp->SetForwardSpeed(forwardSpeed);
-	mMoveComp->SetStrafeSpeed(strafeSpeed);
+	mMove->SetForwardSpeed(forwardSpeed);
+	mMove->SetStrafeSpeed(strafeSpeed);
 
 	int x, y;
-	auto button = SDL_GetRelativeMouseState(&x, &y);
+	SDL_GetRelativeMouseState(&x, &y);
 
 	const int maxMouseSpeed = 500;
 	const float maxAngularSpeed = Math::Pi * 8;
@@ -71,9 +69,7 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 		angularSpeed = static_cast<float>(x) / maxMouseSpeed;
 		angularSpeed *= maxAngularSpeed;
 	}
-	mMoveComp->SetAngularSpeed(angularSpeed);
-	if(button & SDL_BUTTON(SDL_BUTTON_RIGHT))
-		mOrbitCamera->SetYawSpeed(angularSpeed);
+	mMove->SetAngularSpeed(angularSpeed);
 
 	const float maxPitchSpeed = Math::Pi * 8;
 	float pitchSpeed = 0.f;
@@ -83,6 +79,9 @@ void FPSActor::ActorInput(const uint8_t* keyState)
 		pitchSpeed *= maxPitchSpeed;
 	}
 	mCamera->SetPitchSpeed(pitchSpeed);
-	if (button & SDL_BUTTON(SDL_BUTTON_RIGHT))
-	mOrbitCamera->SetPitchSpeed(pitchSpeed);
+}
+
+void FPSActor::SetVisible(bool b)
+{
+	mMesh->SetVisible(b);
 }

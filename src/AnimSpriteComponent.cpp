@@ -24,17 +24,7 @@ void AnimSpriteComponent::Update(float deltaTime)
 	}
 }
 
-//void AnimSpriteComponent::SetAnimTextures(const std::vector<SDL_Texture*>& textures)
-//{
-//	mAnimTextures = textures;
-//	if (!mAnimTextures.empty())
-//	{
-//		mCurrFrame = 0.f;
-//		SetTexture(mAnimTextures[0]);
-//	}
-//}
-
-void AnimSpriteComponent::SetAnimTextures(const std::vector<Texture*>& textures)
+void AnimSpriteComponent::SetAnimTextures(const std::vector<TexturePtr>& textures)
 {
 	mAnimTextures = textures;
 	if (!mAnimTextures.empty())

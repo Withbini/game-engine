@@ -11,6 +11,7 @@ MeshComponent::MeshComponent(Actor* owner)
 	:Component(owner)
 	,mMesh(nullptr)
 	,mTextureIdx(0)
+	,mVisible(true)
 {
 	mOwner->GetGame()->GetRenderer()->AddMesh(this);
 }
@@ -27,7 +28,7 @@ void MeshComponent::Draw(Shader* shader)
 		shader->setMat4("world", mOwner->GetWorldTransform());
 		shader->setFloat("specPower", mMesh->GetSpecPower());
 
-		Texture* t = mMesh->GetTexture(mTextureIdx);
+		auto t = mMesh->GetTexture(mTextureIdx);
 		if (t) t->Bind();
 		VertexArray* va = mMesh->GetVertexArray();
 		va->Bind();

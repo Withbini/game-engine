@@ -2,6 +2,7 @@
 #include "SDL_image.h"
 #include "SpriteComponent.hpp"
 #include "Renderer.hpp"
+#include "Common.hpp"
 
 Game::Game()
 	: mIsRunning(true)
@@ -21,6 +22,12 @@ Game::~Game()
 
 bool Game::Initialize()
 {
+	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	{
+		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		return false;
+	}
+
 	mRenderer = new	Renderer(this);
 	if (!mRenderer->Initialize((float)WINDOW_WIDTH, (float)WINDOW_HEIGHT))
 	{
@@ -36,6 +43,7 @@ bool Game::Initialize()
 
 void Game::RunLoop()
 {
+	MouseMode(false);
 	while (mIsRunning)
 	{
 		ProcessInput();
@@ -89,16 +97,20 @@ void Game::ProcessInput()
 	SDL_Event event;
 	while (SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
 		switch (event.type)
 		{
 		case SDL_QUIT:
 			mIsRunning = false;
 			break;
+		case SDL_KEYDOWN:
+			HandleKeyPress(&event.key);
+			break;
 		default:
 			break;
 		}
 	}
-
+	
 	const uint8_t* state = SDL_GetKeyboardState(nullptr);
 
 	if (state[SDL_SCANCODE_ESCAPE])
@@ -106,7 +118,8 @@ void Game::ProcessInput()
 
 	mUpdatingActors = true;
 	for (auto* actor : mActors)
-		actor->ProcessInput(state);
+		if(!mMouseMode)
+			actor->ProcessInput(state);
 	mUpdatingActors = false;
 }
 
@@ -149,9 +162,18 @@ void Game::UpdateGame()
 	}
 }
 
-void Game::ChangeCamera(uint8_t keyState)
+void Game::HandleKeyPress(SDL_KeyboardEvent* key)
 {
+	
+	switch(key->keysym.sym)
+	{
+	case '`':
+		MouseMode(!mMouseMode);
+		mMouseMode = !mMouseMode;
+		break;
+	}
 }
+
 void Game::GenerateOutput() const
 {
 	mRenderer->Draw();
@@ -159,6 +181,19 @@ void Game::GenerateOutput() const
 
 void Game::LoadData()
 {
+}
+
+void Game::MouseMode(bool on) const
+{
+	if(on)
+	{
+		SDL_SetRelativeMouseMode(SDL_FALSE);
+	}
+	else
+	{
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+		SDL_GetRelativeMouseState(nullptr, nullptr);
+	}
 }
 
 void Game::UnloadData()

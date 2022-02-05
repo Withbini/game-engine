@@ -11,7 +11,7 @@ Ship::Ship(ShipGame* game)
 	// Create an animated sprite component
 	auto asc = new AnimSpriteComponent(this);
 
-	std::vector<Texture*> anims = {
+	std::vector<TexturePtr> anims = {
 		game->GetRenderer()->GetTexture("Assets/Ship01.png"),
 		game->GetRenderer()->GetTexture("Assets/Ship02.png"),
 		game->GetRenderer()->GetTexture("Assets/Ship03.png"),

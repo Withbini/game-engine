@@ -5,7 +5,7 @@
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
-
+//TODO: Use glm only
 #include "Math.hpp"
 
 const Vector2 Vector2::Zero(0.0f, 0.0f);

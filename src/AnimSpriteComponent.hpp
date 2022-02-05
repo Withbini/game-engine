@@ -10,12 +10,12 @@ public:
 	AnimSpriteComponent(Actor* owner, int drawOrder = 100);
 	void Update(float deltaTime) override;
 	//void SetAnimTextures(const std::vector<SDL_Texture*>&textures);
-	void SetAnimTextures(const std::vector<Texture*>&textures);
+	void SetAnimTextures(const std::vector<TexturePtr>& textures);
 
 	float GetAnimFPS() const { return mAnimFPS; }
 	void SetAnimFPS(float fps) { mAnimFPS = fps; }
 private:
-	std::vector<Texture*>mAnimTextures;
+	std::vector<TexturePtr>mAnimTextures;
 	float mCurrFrame;
 	float mAnimFPS;
 };

@@ -1,5 +1,5 @@
 #include "VertexArray.hpp"
-#include <GL/glew.h>
+#include <glad/glad.h>
 
 VertexArray::VertexArray(const float* verts, unsigned int numVerts,
 	const unsigned int* indices, unsigned int numIndices)
