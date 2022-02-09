@@ -15,7 +15,7 @@ void FollowCamera::Update(float deltaTime)
 {
 	CameraComponent::Update(deltaTime);
 
-	float dampening = 2 * Math::Sqrt(mSpringConstant);
+	float dampening = 2.f * Math::Sqrt(mSpringConstant);
 
 	Vector3 idealPos = GetCameraPos();
 	Vector3 diff = mActualPos - idealPos;
@@ -24,9 +24,8 @@ void FollowCamera::Update(float deltaTime)
 	mVelocity += accel * deltaTime;
 	mActualPos += mVelocity * deltaTime;
 
-	Matrix4 view;
 	Vector3 target = mOwner->GetPosition() + mOwner->GetForward()* mTargetDist;
-	view = Matrix4::CreateLookAt(mActualPos, target, Vector3::UnitZ);
+	Matrix4 view = Matrix4::CreateLookAt(mActualPos, target, Vector3::UnitZ);
 	SetViewMatrix(view);
 }
 

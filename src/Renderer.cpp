@@ -9,6 +9,7 @@
 
 #include "GBuffer.hpp"
 #include "Image.hpp"
+#include "LightComponent.hpp"
 
 Renderer::Renderer(Game* game)
 	:mGame(game)
@@ -79,23 +80,25 @@ bool Renderer::Initialize(float width, float height)
 	CreateSpriteVerts();
 
 	mGBuffer = new GBuffer();
-	if(!mGBuffer->Create(static_cast<int>(width), static_cast<int>(height)))
+	if (!mGBuffer->Create(static_cast<int>(width), static_cast<int>(height)))
 	{
-		SDL_Log("Failed to Creae gbuffer");
+		SDL_Log("Failed to Create gbuffer");
 		return false;
 	}
+
+	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
 	return true;
 }
 
 void Renderer::Shutdown()
 {
-	/*ImGui_ImplOpenGL3_DestroyFontsTexture();
+	ImGui_ImplOpenGL3_DestroyFontsTexture();
 	ImGui_ImplOpenGL3_DestroyDeviceObjects();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext(mImGuiContext);*/
+	ImGui::DestroyContext(mImGuiContext);
 
-	if(mGBuffer)
+	if (mGBuffer)
 	{
 		mGBuffer->Destroy();
 		delete mGBuffer;
@@ -120,7 +123,7 @@ void Renderer::UnloadData()
 	mMeshes.clear();
 }
 
-void Renderer::SetUniforms(Shader* shader,Matrix4& view) const
+void Renderer::SetUniforms(Shader* shader, Matrix4& view) const
 {
 	Matrix4 invView = view;
 	invView.Invert();
@@ -135,32 +138,8 @@ void Renderer::SetUniforms(Shader* shader,Matrix4& view) const
 
 void Renderer::Draw()
 {
-	//explicit imgui new frame
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
-
-	if (ImGui::Begin("first~~"))
-	{
-		ImGui::Text("THIS is first");
-		ImGui::Separator();
-	}
-	ImGui::End();
-
-	if (ImGui::Begin("G-Buffers")) {
-		const char* bufferNames[] = {
-			"diffuse", "normal", "position",
-		};
-		static int bufferSelect = 0;
-		ImGui::Combo("buffer", &bufferSelect, bufferNames, 3);
-		
-		const float width = ImGui::GetContentRegionAvail().x;
-		const float height = width * (mScreenHeight / mScreenWidth);
-		ImGui::Image((ImTextureID)mGBuffer->GetTexture(bufferSelect)->GetTextureID(),
-			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
-	}
-	ImGui::End();
-
-	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix,1.f);
+	//DrawScene(0, mViewMatrix, mProjMatrix, 1.f);
+	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix, 1.f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	DrawFromGBuffer();
 
@@ -176,6 +155,29 @@ void Renderer::Draw()
 		if (comp->GetVisible())
 			comp->Draw(mSpriteShader);
 	}
+	//explicit imgui new frame
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	if (ImGui::Begin("G-Buffers")) {
+		const char* bufferNames[] = {
+			"diffuse", "normal", "position",
+		};
+		static int bufferSelect = 0;
+		ImGui::Combo("buffer", &bufferSelect, bufferNames, 3);
+
+		const float width = ImGui::GetContentRegionAvail().x;
+		const float height = width * (mScreenHeight / mScreenWidth);
+		ImGui::Image((ImTextureID)mGBuffer->GetTexture(bufferSelect)->GetTextureID(),
+			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
+	}
+	ImGui::End();
+	if (ImGui::Begin("directional light"))
+	{
+		ImGui::DragFloat3("position", glm::value_ptr(mDirLight.mDirection),0.1,-200,200);
+		ImGui::ColorEdit3("color", glm::value_ptr(mDirLight.mDiffuseColor));
+	}
+	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -240,8 +242,16 @@ bool Renderer::LoadShaders()
 	mGGlobalShader->setInt("gNormal", 1);
 	mGGlobalShader->setInt("gPosition", 2);
 	mGGlobalShader->setMat4("viewProj", viewProj);
-	const Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight,1.f);
+	const Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.f);
 	mGGlobalShader->setMat4("world", gbufferWorld);
+
+	mGPointLightShader = new Shader("src/Shader/Basic.vert", "src/Shader/GBufferPointLight.frag");
+	mGPointLightShader->Bind();
+	mGPointLightShader->setInt("gDiffuse", 0);
+	mGPointLightShader->setInt("gNormal", 1);
+	mGPointLightShader->setInt("gPosition", 2);
+	mGPointLightShader->setMat4("viewProj", viewProj);
+	mGPointLightShader->setVec2("screenDimensions", mScreenWidth, mScreenHeight);
 	return true;
 }
 
@@ -251,37 +261,66 @@ void Renderer::DrawFromGBuffer()
 	mGGlobalShader->Bind();
 	mSpriteVerts->Bind();
 	mGBuffer->SetTexturesActive();
-	SetUniforms(mGGlobalShader,mViewMatrix);
+	SetUniforms(mGGlobalShader, mViewMatrix);
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
-	/*glBindFramebuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
-	int width = static_cast<int>(mScreenWidth);
-	int height = static_cast<int>(mScreenHeight);
-	glBlitFramebuffer(0, 0, width, height,
-		0, 0, width, height,
-		GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindBuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
+	const int width = static_cast<int>(mScreenWidth);
+	const int height = static_cast<int>(mScreenHeight);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST); //frame buffer의 depth buffer를 기본버퍼로 가져옴.
 
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_FALSE);
+	glEnable(GL_DEPTH_TEST); //depth test 사용하지만
+	glDepthMask(GL_FALSE); //depth buffer에 쓰지는 않을거야
 
+	mGPointLightShader->Bind();
+	mPointLightMesh->GetVertexArray()->Bind();
+	mGPointLightShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
 	mGBuffer->SetTexturesActive();
 
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE);*/
+	glBlendFunc(GL_ONE, GL_ONE);
+	for (auto* light : mLightComponents)
+	{
+		light->Draw(mGPointLightShader, mPointLightMesh);
+	}
 }
 
-TexturePtr Renderer::GetTexture(const std::string& fileName)
+//TexturePtr Renderer::GetTexture(const std::string& fileName)
+//{
+//	const auto textureFromFile = mTextures.find(fileName);
+//	if (textureFromFile == mTextures.end()) {
+//		auto image = Image::Load(fileName);
+//		auto texture = Texture::CreateFromImage(image.get());
+//		mTextures.insert({ fileName, texture });
+//
+//		return mTextures.find(fileName)->second;
+//	}
+//	return textureFromFile->second;
+//}
+
+Texture* Renderer::GetTexture(const std::string& fileName)
 {
-	const auto textureFromFile = mTextures.find(fileName);
-	if (textureFromFile == mTextures.end()) {
-		auto image = Image::Load(fileName);
-		auto texture = Texture::CreateFromImage(image.get());
-		mTextures.insert({ fileName, texture });
-		
-		return mTextures.find(fileName)->second;
+	Texture* tex = nullptr;
+	auto iter = mTextures.find(fileName);
+	if (iter != mTextures.end())
+	{
+		tex = iter->second;
 	}
-	return textureFromFile->second;
+	else
+	{
+		tex = new Texture();
+		if (tex->Load(fileName))
+		{
+			mTextures.emplace(fileName, tex);
+		}
+		else
+		{
+			delete tex;
+			tex = nullptr;
+		}
+	}
+	return tex;
 }
 
 Mesh* Renderer::GetMesh(const std::string& fileName)
@@ -336,4 +375,19 @@ Vector3 Renderer::Unproject(const Vector3& screenPoint) const
 	Matrix4 mat = mViewMatrix * mProjMatrix;
 	mat.Invert();
 	return Vector3::TransformWithPerspDiv(nDC, mat);
+}
+
+void Renderer::AddPointLight(class LightComponent* light)
+{
+	mLightComponents.emplace_back(light);
+}
+
+void Renderer::RemovePointLight(class LightComponent* light)
+{
+	auto l = std::find(mLightComponents.begin(), mLightComponents.end(), light);
+	if (l != mLightComponents.end())
+	{
+		std::iter_swap(l, mLightComponents.end() - 1);
+		mLightComponents.pop_back();
+	}
 }

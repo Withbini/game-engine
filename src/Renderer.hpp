@@ -4,14 +4,24 @@
 #include <vector>
 #include "Math.hpp"
 #include "Texture.hpp"
+#include "Common.hpp"
 
+using std::string;
+using std::vector;
 //phong shader
 struct DirectionalLight {
-	Vector3 mDirection;
-	Vector3 mDiffuseColor;
+	glm::vec3 mDirection;
+	glm::vec3 mDiffuseColor;
 	Vector3 mSpecColor;
 };
 
+struct PointLight {
+	Vector3 position;
+	Vector3 diffuseColor;
+	float inRadius;
+	float outRadius;
+	Vector3 specColor;
+};
 class Renderer
 {
 public:
@@ -30,7 +40,8 @@ public:
 	void AddMesh(class MeshComponent* sprite);
 	void RemoveMesh(class MeshComponent* sprite);
 
-	TexturePtr GetTexture(const std::string& file);
+	//TexturePtr GetTexture(const std::string& file);
+	Texture* GetTexture(const std::string& file);
 	class Mesh* GetMesh(const std::string& fileName);
 
 	float GetScreenWidth() const { return mScreenWidth; }
@@ -52,6 +63,10 @@ public:
 	void SetLightColor(const Vector3& color) {mLightColor =color;}
 
 	Vector3 Unproject(const Vector3& screenPoint) const;
+	
+	PointLight pointLight;
+	void AddPointLight(class LightComponent* light);
+	void RemovePointLight(class LightComponent* light);
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();
@@ -59,7 +74,8 @@ protected:
 
 	class Game* mGame;
 	
-	std::unordered_map<std::string, TexturePtr> mTextures;
+//	std::unordered_map<std::string, TexturePtr> mTextures;
+	std::unordered_map<std::string, Texture*> mTextures;
 	std::unordered_map<std::string, class Mesh*> mMeshes;
 	std::vector<class SpriteComponent*> mSprites;
 	std::vector<class MeshComponent*> mMeshComps;
@@ -87,4 +103,9 @@ protected:
 	//gbuffer
 	class GBuffer* mGBuffer;
 	class Shader* mGGlobalShader;
+
+	//pointlight
+	class Shader* mGPointLightShader;
+	class Mesh* mPointLightMesh;
+	std::vector<class LightComponent*> mLightComponents; //temporary
 };

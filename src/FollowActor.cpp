@@ -21,11 +21,11 @@ void FollowActor::ActorInput(const uint8_t* keyState)
 
 	if (keyState[SDL_SCANCODE_W])
 	{
-		forwardSpeed += 400.0f;
+		forwardSpeed += 4000.0f;
 	}
 	if (keyState[SDL_SCANCODE_S])
 	{
-		forwardSpeed -= 400.0f;
+		forwardSpeed -= 4000.0f;
 	}
 	if (keyState[SDL_SCANCODE_A])
 	{
@@ -47,9 +47,4 @@ void FollowActor::ActorInput(const uint8_t* keyState)
 	{
 		mCamera->SetHorzDist(350.f);
 	}
-}
-
-void FollowActor::UpdateActor(float deltaTime)
-{
-	Actor::UpdateActor(deltaTime);
 }

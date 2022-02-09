@@ -158,9 +158,6 @@
     <ClCompile Include="3rdParty\glad\src\glad.c">
       <Filter>소스 파일\External</Filter>
     </ClCompile>
-    <ClCompile Include="example\3dGame.cpp">
-      <Filter>소스 파일\Example\chapter5</Filter>
-    </ClCompile>
     <ClCompile Include="src\GBuffer.cpp">
       <Filter>소스 파일\Core</Filter>
     </ClCompile>
@@ -187,6 +184,12 @@
     </ClCompile>
     <ClCompile Include="imgui\imgui_widgets.cpp">
       <Filter>소스 파일\External\Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LightComponent.cpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClCompile>
+    <ClCompile Include="example\3dGame.cpp">
+      <Filter>소스 파일\Example\chapter6</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -337,6 +340,9 @@
     <ClInclude Include="imgui\imstb_truetype.h">
       <Filter>소스 파일\External\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="src\LightComponent.hpp">
+      <Filter>소스 파일\Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader\Sprite.frag">
@@ -370,9 +376,6 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="src\shader\GBufferPointLight.frag">
-      <Filter>Shader</Filter>
-    </None>
-    <None Include="src\shader\GBufferPointLight.vert">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>
