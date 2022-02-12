@@ -6,7 +6,7 @@ CLASS_PTR(Image)
 class Image
 {
 public:
-	static ImagePtr Load(const std::string& file);
+	static ImageUPtr Load(const std::string& file);
 	~Image();
 
 	int GetWidth() const { return mWidth; }

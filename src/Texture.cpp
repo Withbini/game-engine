@@ -40,7 +40,7 @@ void Texture::CreateTexture()
 	glGenTextures(1, &mTextureID);
 	Bind();
 	SetFilter(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
-	SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
+	//SetWrap(GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
 }
 
 void Texture::SetFilter(uint32_t minFilter, uint32_t magFilter) const

@@ -5,6 +5,7 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 #include "Common.hpp"
+#include "FrameBuffer.hpp"
 
 using std::string;
 using std::vector;
@@ -40,8 +41,7 @@ public:
 	void AddMesh(class MeshComponent* sprite);
 	void RemoveMesh(class MeshComponent* sprite);
 
-	//TexturePtr GetTexture(const std::string& file);
-	Texture* GetTexture(const std::string& file);
+	TexturePtr GetTexture(const std::string& file);
 	class Mesh* GetMesh(const std::string& fileName);
 
 	float GetScreenWidth() const { return mScreenWidth; }
@@ -51,9 +51,7 @@ public:
 	void SetUniforms(class Shader* shader,Matrix4& view) const;
 
 	Matrix4 GetViewMatrix() const {return mViewMatrix;}
-	//Matrix4 GetProjMatrix() const {return mProjMatrix;}
 	void SetViewMatrix(const Matrix4& mat) { mViewMatrix = mat; }
-	//void SetProjMatrix(const Matrix4& mat) { mProjMatrix = mat; }
 
 	DirectionalLight& GetDirectionalLight() {return mDirLight;}
 	void SetDirectionalLight(const DirectionalLight& light) {mDirLight = light;}
@@ -67,6 +65,10 @@ public:
 	PointLight pointLight;
 	void AddPointLight(class LightComponent* light);
 	void RemovePointLight(class LightComponent* light);
+
+	//temp
+	Matrix4 mMirrorView;
+	FrameBufferUPtr mMirrorBuffer;
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();
@@ -74,8 +76,7 @@ protected:
 
 	class Game* mGame;
 	
-//	std::unordered_map<std::string, TexturePtr> mTextures;
-	std::unordered_map<std::string, Texture*> mTextures;
+	std::unordered_map<std::string, TexturePtr> mTextures;
 	std::unordered_map<std::string, class Mesh*> mMeshes;
 	std::vector<class SpriteComponent*> mSprites;
 	std::vector<class MeshComponent*> mMeshComps;

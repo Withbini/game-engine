@@ -44,6 +44,7 @@
     <ClCompile Include="src\Component.cpp" />
     <ClCompile Include="src\FPSCamera.cpp" />
     <ClCompile Include="src\FPSModel.cpp" />
+    <ClCompile Include="src\FrameBuffer.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GBuffer.cpp" />
     <ClCompile Include="src\Image.cpp" />
@@ -54,6 +55,7 @@
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshComponent.cpp" />
+    <ClCompile Include="src\MirrorCamera.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\openglRenderer.cpp" />
     <ClCompile Include="src\OrbitActor.cpp" />
@@ -95,6 +97,7 @@
     <ClInclude Include="src\Component.hpp" />
     <ClInclude Include="src\FPSCamera.hpp" />
     <ClInclude Include="src\FPSModel.hpp" />
+    <ClInclude Include="src\FrameBuffer.hpp" />
     <ClInclude Include="src\Game.hpp" />
     <ClInclude Include="src\GBuffer.hpp" />
     <ClInclude Include="src\Image.hpp" />
@@ -104,6 +107,7 @@
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\MeshComponent.hpp" />
+    <ClInclude Include="src\MirrorCamera.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\openglRenderer.hpp" />
     <ClInclude Include="src\OrbitActor.hpp" />

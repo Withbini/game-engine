@@ -141,7 +141,7 @@ void GL3DGame::LoadData()
 	sc = new SpriteComponent(a);
 	sc->SetTexture(mRenderer->GetTexture("Assets/Radar.png"));
 
-	ChangeCamera(1);
+	ChangeCamera('2');
 
 	MouseMode(true);
 }

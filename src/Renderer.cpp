@@ -87,6 +87,8 @@ bool Renderer::Initialize(float width, float height)
 	}
 
 	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
+
+	mMirrorBuffer = FrameBuffer::Create(width, height, GL_RGB, GL_FLOAT);
 	return true;
 }
 
@@ -138,7 +140,7 @@ void Renderer::SetUniforms(Shader* shader, Matrix4& view) const
 
 void Renderer::Draw()
 {
-	//DrawScene(0, mViewMatrix, mProjMatrix, 1.f);
+	DrawScene(mMirrorBuffer->GetFrameBufferID(), mMirrorView, mProjMatrix, 1.f);
 	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix, 1.f);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	DrawFromGBuffer();
@@ -168,14 +170,22 @@ void Renderer::Draw()
 
 		const float width = ImGui::GetContentRegionAvail().x;
 		const float height = width * (mScreenHeight / mScreenWidth);
-		ImGui::Image((ImTextureID)mGBuffer->GetTexture(bufferSelect)->GetTextureID(),
+		ImGui::Image(reinterpret_cast<ImTextureID>(mGBuffer->GetTexture(bufferSelect)->GetTextureID()),
 			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
 	}
 	ImGui::End();
 	if (ImGui::Begin("directional light"))
 	{
-		ImGui::DragFloat3("position", glm::value_ptr(mDirLight.mDirection),0.1,-200,200);
+		ImGui::DragFloat3("position", glm::value_ptr(mDirLight.mDirection),0.1f,-200,200);
 		ImGui::ColorEdit3("color", glm::value_ptr(mDirLight.mDiffuseColor));
+	}
+	ImGui::End();
+	if (ImGui::Begin("mirror"))
+	{
+		const float width = ImGui::GetContentRegionAvail().x;
+		const float height = width * (mScreenHeight / mScreenWidth);
+		ImGui::Image(reinterpret_cast<ImTextureID>(mMirrorBuffer->GetTexture()->GetTextureID()),
+			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
 	}
 	ImGui::End();
 	ImGui::Render();
@@ -233,7 +243,7 @@ bool Renderer::LoadShaders()
 	//mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/BlinPhong.frag");
 	mMeshShader->Bind();
 	mViewMatrix = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
-	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 25.0f, 10000.f);
+	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 10.0f, 10000.f);
 	mMeshShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
 
 	mGGlobalShader = new Shader("src/Shader/GBufferGlobal.vert", "src/Shader/GBufferGlobal.frag");
@@ -250,7 +260,7 @@ bool Renderer::LoadShaders()
 	mGPointLightShader->setInt("gDiffuse", 0);
 	mGPointLightShader->setInt("gNormal", 1);
 	mGPointLightShader->setInt("gPosition", 2);
-	mGPointLightShader->setMat4("viewProj", viewProj);
+	//mGPointLightShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
 	mGPointLightShader->setVec2("screenDimensions", mScreenWidth, mScreenHeight);
 	return true;
 }
@@ -265,6 +275,7 @@ void Renderer::DrawFromGBuffer()
 
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
+	//glClear(GL_COLOR_BUFFER_BIT);
 	glBindBuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
 	const int width = static_cast<int>(mScreenWidth);
 	const int height = static_cast<int>(mScreenHeight);
@@ -286,41 +297,17 @@ void Renderer::DrawFromGBuffer()
 	}
 }
 
-//TexturePtr Renderer::GetTexture(const std::string& fileName)
-//{
-//	const auto textureFromFile = mTextures.find(fileName);
-//	if (textureFromFile == mTextures.end()) {
-//		auto image = Image::Load(fileName);
-//		auto texture = Texture::CreateFromImage(image.get());
-//		mTextures.insert({ fileName, texture });
-//
-//		return mTextures.find(fileName)->second;
-//	}
-//	return textureFromFile->second;
-//}
-
-Texture* Renderer::GetTexture(const std::string& fileName)
+TexturePtr Renderer::GetTexture(const std::string& fileName)
 {
-	Texture* tex = nullptr;
-	auto iter = mTextures.find(fileName);
-	if (iter != mTextures.end())
-	{
-		tex = iter->second;
+	const auto textureFromFile = mTextures.find(fileName);
+	if (textureFromFile == mTextures.end()) {
+		auto image = Image::Load(fileName);
+		auto texture = Texture::CreateFromImage(image.get());
+		mTextures.insert({ fileName, texture });
+
+		return mTextures.find(fileName)->second;
 	}
-	else
-	{
-		tex = new Texture();
-		if (tex->Load(fileName))
-		{
-			mTextures.emplace(fileName, tex);
-		}
-		else
-		{
-			delete tex;
-			tex = nullptr;
-		}
-	}
-	return tex;
+	return textureFromFile->second;
 }
 
 Mesh* Renderer::GetMesh(const std::string& fileName)

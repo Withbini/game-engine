@@ -12,6 +12,15 @@ using std::string;
 using std::vector;
 
 using namespace rapidjson;
+namespace
+{
+	union Vertex
+	{
+		float f;
+		uint8_t b[4];
+	};
+}
+
 Mesh::Mesh()
 	: mShaderName("")
 	, mVertexArray(nullptr)
@@ -21,6 +30,11 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+	if (mVertexArray)
+	{
+		delete mVertexArray;
+		mVertexArray = nullptr;
+	}
 }
 
 string Mesh::read(const string& path)
@@ -73,18 +87,20 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 
 	mSpecPower = static_cast<float>(document["specularPower"].GetDouble());
 
-	vector<float>vertex;
+	vector<Vertex>vertex;
 	Value& vert = document["vertices"];
 	vertex.reserve(vert.Size() * 8);
 	mRadius = 0.f;
 	for (SizeType i = 0; i < vert.Size(); ++i)
 	{
 		const Value& v = vert[i];
-		Vector3 pos(v[0].GetFloat(), v[1].GetFloat(), v[2].GetFloat());
+		Vector3 pos(v[0].GetDouble(), v[1].GetDouble(), v[2].GetDouble());
+		Vertex ver;
 		mRadius = Math::Max(mRadius, pos.LengthSq());
 		for (auto j = 0; j < 8; ++j) //TODO: vertex property can be changed.
 		{
-			vertex.emplace_back(static_cast<float>(vert[i][j].GetDouble()));
+			ver.f = static_cast<float>(v[j].GetDouble());
+			vertex.emplace_back(ver);
 		}
 	}
 	mRadius = Math::Sqrt(mRadius);
@@ -110,8 +126,11 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 
 void Mesh::UnLoad()
 {
-	delete mVertexArray;
-	mVertexArray = nullptr;
+	if (mVertexArray)
+	{
+		delete mVertexArray;
+		mVertexArray = nullptr;
+	}
 }
 
 TexturePtr Mesh::GetTexture(size_t index)

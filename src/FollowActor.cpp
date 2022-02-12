@@ -3,15 +3,19 @@
 
 #include "FollowActor.hpp"
 #include "FollowCamera.hpp"
+#include "MirrorCamera.hpp"
 #include "MoveComponent.hpp"
 
 FollowActor::FollowActor(Game* game)
 	:Actor(game)
 	,mCamera(nullptr)
 	,mMove(nullptr)
+	,mMirror(nullptr)
 {
+	SetPosition(Vector3(0.0f, 0.0f, -100.0f));
 	mCamera = new FollowCamera(this);
 	mMove = new MoveComponent(this);
+	mMirror = new MirrorCamera(this);
 }
 
 void FollowActor::ActorInput(const uint8_t* keyState)
@@ -21,11 +25,11 @@ void FollowActor::ActorInput(const uint8_t* keyState)
 
 	if (keyState[SDL_SCANCODE_W])
 	{
-		forwardSpeed += 4000.0f;
+		forwardSpeed += 400.0f;
 	}
 	if (keyState[SDL_SCANCODE_S])
 	{
-		forwardSpeed -= 4000.0f;
+		forwardSpeed -= 400.0f;
 	}
 	if (keyState[SDL_SCANCODE_A])
 	{

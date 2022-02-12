@@ -11,5 +11,6 @@ public:
 private:
 	class FollowCamera* mCamera;
 	class MoveComponent* mMove;
+	class MirrorCamera* mMirror;
 };
 

@@ -9,7 +9,7 @@ Image::~Image()
 		SOIL_free_image_data(mData);
 }
 
-ImagePtr Image::Load(const std::string& file)
+ImageUPtr Image::Load(const std::string& file)
 {
 	auto image = ImageUPtr(new Image);
 	if(!image->LoadWithSOIL(file))

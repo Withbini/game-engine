@@ -191,6 +191,12 @@
     <ClCompile Include="example\3dGame.cpp">
       <Filter>소스 파일\Example\chapter6</Filter>
     </ClCompile>
+    <ClCompile Include="src\MirrorCamera.cpp">
+      <Filter>소스 파일\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FrameBuffer.cpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="example\Ship.hpp">
@@ -342,6 +348,12 @@
     </ClInclude>
     <ClInclude Include="src\LightComponent.hpp">
       <Filter>소스 파일\Component</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MirrorCamera.hpp">
+      <Filter>소스 파일\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FrameBuffer.hpp">
+      <Filter>소스 파일\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

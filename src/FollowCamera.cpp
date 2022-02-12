@@ -5,9 +5,9 @@
 FollowCamera::FollowCamera(Actor* owner)
 	:CameraComponent(owner)
 	, mHorzDist(350.0f)
-	, mVertDist(150.0f)
+	, mVertDist(250.0f)
 	, mTargetDist(100.0f)
-	, mSpringConstant(64.0f)
+	, mSpringConstant(128.0f)
 {
 }
 
