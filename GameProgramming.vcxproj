@@ -92,6 +92,7 @@
     <ClInclude Include="src\Common.hpp" />
     <ClInclude Include="src\FollowActor.hpp" />
     <ClInclude Include="src\FollowCamera.hpp" />
+    <ClInclude Include="src\Format.hpp" />
     <ClInclude Include="src\FPSActor.hpp" />
     <ClInclude Include="src\CircleComponent.hpp" />
     <ClInclude Include="src\Component.hpp" />

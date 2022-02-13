@@ -19,12 +19,10 @@ void MirrorCamera::Update(float deltaTime)
 {
 	CameraComponent::Update(deltaTime);
 
-	Vector3 idealPos = ComputeCameraPos();
-	Vector3 target = mOwner->GetPosition() -
-		mOwner->GetForward() * mTargetDist;
-	Matrix4 view = Matrix4::CreateLookAt(idealPos, target,
-		Vector3::UnitZ);
-	mOwner->GetGame()->GetRenderer()->mMirrorView = view;
+	const Vector3 idealPos = ComputeCameraPos();
+	const Vector3 target = mOwner->GetPosition() - mOwner->GetForward() * mTargetDist;
+	const Matrix4 view = Matrix4::CreateLookAt(idealPos, target,Vector3::UnitZ);
+	mOwner->GetGame()->GetRenderer()->setMirrorView(view);
 }
 
 Vector3 MirrorCamera::ComputeCameraPos() const

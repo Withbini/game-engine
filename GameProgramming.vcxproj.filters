@@ -355,6 +355,9 @@
     <ClInclude Include="src\FrameBuffer.hpp">
       <Filter>소스 파일\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Format.hpp">
+      <Filter>소스 파일\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader\Sprite.frag">

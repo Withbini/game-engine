@@ -19,7 +19,7 @@ void GL3DGame::LoadData()
 	q = Quaternion::Concatenate(q, Quaternion(Vector3::UnitZ, Math::PiOver2));
 	a->SetRotation(q);
 	MeshComponent* mc = new MeshComponent(a);
-	//mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
+	mc->SetMesh(mRenderer->GetMesh("Assets/Cube.gpmesh"));
 
 	a = new Actor(this);
 	a->SetPosition(Vector3(200.0f, -75.0f, 0.0f));
@@ -121,7 +121,7 @@ void GL3DGame::LoadData()
 	DirectionalLight& dir = mRenderer->GetDirectionalLight();
 	dir.mDirection = glm::vec3(0.0f, -0.707f, -0.707f);
 	dir.mDiffuseColor = glm::vec3(0.78f, 0.88f, 1.0f);
-	dir.mSpecColor = glm::vec3(0.8f, 0.8f, 0.8f);
+	dir.mSpecColor = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	// Camera actor
 	mFPSActor = new FPSActor(this);

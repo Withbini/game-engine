@@ -88,7 +88,7 @@ bool Renderer::Initialize(float width, float height)
 
 	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
 
-	mMirrorBuffer = FrameBuffer::Create(width, height, GL_RGB, GL_FLOAT);
+	mMirrorBuffer = FrameBuffer::Create(static_cast<int>(width), static_cast<int>(height), GL_RGB, GL_FLOAT);
 	return true;
 }
 
@@ -163,10 +163,10 @@ void Renderer::Draw()
 
 	if (ImGui::Begin("G-Buffers")) {
 		const char* bufferNames[] = {
-			"diffuse", "normal", "position",
+			"diffuse", "normal", "position", "specular"
 		};
 		static int bufferSelect = 0;
-		ImGui::Combo("buffer", &bufferSelect, bufferNames, 3);
+		ImGui::Combo("buffer", &bufferSelect, bufferNames, sizeof(bufferNames)/sizeof(const char*));
 
 		const float width = ImGui::GetContentRegionAvail().x;
 		const float height = width * (mScreenHeight / mScreenWidth);
@@ -207,7 +207,7 @@ void Renderer::DrawScene(unsigned framebuffer, const Matrix4& view, const Matrix
 	glDisable(GL_BLEND);
 	mMeshShader->Bind();
 	mMeshShader->setMat4("viewProj", view*proj);
-	//SetUniforms(mMeshShader,mViewMatrix);
+
 	for (auto comp : mMeshComps)
 	{
 		if (comp->GetVisible())
@@ -251,6 +251,7 @@ bool Renderer::LoadShaders()
 	mGGlobalShader->setInt("gDiffuse", 0);
 	mGGlobalShader->setInt("gNormal", 1);
 	mGGlobalShader->setInt("gPosition", 2);
+	mGGlobalShader->setInt("gSpecular", 3);
 	mGGlobalShader->setMat4("viewProj", viewProj);
 	const Matrix4 gbufferWorld = Matrix4::CreateScale(mScreenWidth, -mScreenHeight, 1.f);
 	mGGlobalShader->setMat4("world", gbufferWorld);
@@ -260,7 +261,7 @@ bool Renderer::LoadShaders()
 	mGPointLightShader->setInt("gDiffuse", 0);
 	mGPointLightShader->setInt("gNormal", 1);
 	mGPointLightShader->setInt("gPosition", 2);
-	//mGPointLightShader->setMat4("viewProj", mViewMatrix * mProjMatrix);
+	mGGlobalShader->setInt("gSpecular", 3);
 	mGPointLightShader->setVec2("screenDimensions", mScreenWidth, mScreenHeight);
 	return true;
 }

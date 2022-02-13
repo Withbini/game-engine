@@ -13,7 +13,7 @@ using std::vector;
 struct DirectionalLight {
 	glm::vec3 mDirection;
 	glm::vec3 mDiffuseColor;
-	Vector3 mSpecColor;
+	glm::vec3 mSpecColor;
 };
 
 struct PointLight {
@@ -66,9 +66,7 @@ public:
 	void AddPointLight(class LightComponent* light);
 	void RemovePointLight(class LightComponent* light);
 
-	//temp
-	Matrix4 mMirrorView;
-	FrameBufferUPtr mMirrorBuffer;
+	void setMirrorView(const Matrix4 &view) { mMirrorView = view; }
 protected:
 	virtual void CreateSpriteVerts();
 	virtual bool LoadShaders();
@@ -96,7 +94,7 @@ protected:
 	DirectionalLight mDirLight;
 	Vector3 mAmbient;
 	Vector3 mLightColor;
-	float mSpecPower = 20.f;
+	const float mSpecPower = 20.f;
 
 	//imgui
 	struct ImGuiContext* mImGuiContext;
@@ -105,8 +103,13 @@ protected:
 	class GBuffer* mGBuffer;
 	class Shader* mGGlobalShader;
 
+	//TODO : fix bug
 	//pointlight
 	class Shader* mGPointLightShader;
 	class Mesh* mPointLightMesh;
-	std::vector<class LightComponent*> mLightComponents; //temporary
+	std::vector<class LightComponent*> mLightComponents;
+
+	//mirror
+	Matrix4 mMirrorView;
+	FrameBufferUPtr mMirrorBuffer;
 };

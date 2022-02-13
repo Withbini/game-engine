@@ -5,6 +5,7 @@ layout (location=0) out vec4 outColor;
 uniform sampler2D gDiffuse;
 uniform sampler2D gNormal;
 uniform sampler2D gPosition;
+uniform sampler2D gSpecular;
 
 uniform vec3 cameraPos;
 uniform vec3 ambient;
@@ -14,13 +15,14 @@ struct DirectionalLight{
 	vec3 diffuseColor;
 	vec3 specColor;
 };
-
+uniform float specPower;
 uniform DirectionalLight dirLight;
 
 void main(){
 	vec3 gbufferDiffuse = texture(gDiffuse,fragCoord).xyz;
 	vec3 gbufferNormal = texture(gNormal,fragCoord).xyz;
 	vec3 gbufferWorldPos = texture(gPosition,fragCoord).xyz;
+	vec3 gbufferSpecular = texture(gSpecular,fragCoord).xyz;
 
 	vec3 N = normalize(gbufferNormal);
 	vec3 L = normalize(-dirLight.direction);
@@ -31,6 +33,6 @@ void main(){
 	float NdotL = dot(N,L);
 	vec3 Phong=ambient;
 	Phong+=max(dot(N,L),0.0f)*dirLight.diffuseColor;
-	//Phong =clamp(Phong,0.0,1.0);
+	Phong+=pow(max(dot(N,H),0.0),specPower)*dirLight.specColor*gbufferSpecular;
 	outColor =vec4(gbufferDiffuse*Phong,1.0);
 }

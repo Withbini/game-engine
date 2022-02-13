@@ -26,4 +26,6 @@ private:
 	std::vector<TexturePtr> mTextures;
 
 	float mSpecPower;
+
+	friend class MeshComponent;
 };
