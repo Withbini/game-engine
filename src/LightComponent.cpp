@@ -20,11 +20,11 @@ void LightComponent::Draw(Shader* shader, Mesh* mesh) const
 {
 	Matrix4 scale = Matrix4::CreateScale(mOwner->GetScale()*mOuterRadius / mesh->GetRadius());
 	Matrix4 trans = Matrix4::CreateTranslation(mOwner->GetPosition());
-	shader->setMat4("world", scale*trans);
+	shader->SetMat4("world", scale*trans);
 	shader->setVec3("light.position", mOwner->GetPosition());
 	shader->setVec3("light.diffuseColor", mDiffuseColor);
-	shader->setFloat("light.inRadius", mInnerRadius);
-	shader->setFloat("light.outRadius", mOuterRadius);
+	shader->SetFloat("light.inRadius", mInnerRadius);
+	shader->SetFloat("light.outRadius", mOuterRadius);
 
 	glDrawElements(GL_TRIANGLES, mesh->GetVertexArray()->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
 }

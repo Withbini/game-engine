@@ -55,7 +55,9 @@
     <ClCompile Include="src\Math.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\MeshComponent.cpp" />
+    <ClCompile Include="src\MirrorBuffer.cpp" />
     <ClCompile Include="src\MirrorCamera.cpp" />
+    <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="src\MoveComponent.cpp" />
     <ClCompile Include="src\openglRenderer.cpp" />
     <ClCompile Include="src\OrbitActor.cpp" />
@@ -108,7 +110,9 @@
     <ClInclude Include="src\Math.hpp" />
     <ClInclude Include="src\Mesh.hpp" />
     <ClInclude Include="src\MeshComponent.hpp" />
+    <ClInclude Include="src\MirrorBuffer.hpp" />
     <ClInclude Include="src\MirrorCamera.hpp" />
+    <ClInclude Include="src\Model.hpp" />
     <ClInclude Include="src\MoveComponent.hpp" />
     <ClInclude Include="src\openglRenderer.hpp" />
     <ClInclude Include="src\OrbitActor.hpp" />
@@ -127,6 +131,8 @@
     <None Include="src\shader\Basic.frag" />
     <None Include="src\shader\Basic.vert" />
     <None Include="src\shader\BlinPhong.frag" />
+    <None Include="src\shader\blur5x5.frag" />
+    <None Include="src\shader\blur5x5.vert" />
     <None Include="src\shader\GBuffer.frag" />
     <None Include="src\shader\GBufferGlobal.frag" />
     <None Include="src\shader\GBufferGlobal.vert" />
@@ -135,6 +141,8 @@
     <None Include="src\shader\Phong.vert" />
     <None Include="src\shader\Sprite.frag" />
     <None Include="src\shader\Sprite.vert" />
+    <None Include="src\shader\SSAO.frag" />
+    <None Include="src\shader\SSAO.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="imgui\LICENSE.txt" />
@@ -216,12 +224,12 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)3rdParty\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)3rdParty\glad\include;$(SolutionDir)3rdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;soil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;$(SolutionDir)3rdParty\assimp\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;soil.lib;assimp-vc141-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -250,14 +258,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)\3rdParty\glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)3rdParty\SDL2\include;$(SolutionDir)3rdParty\SDL2_image\include;$(SolutionDir)3rdParty\glew\include;$(SolutionDir)3rdParty\SOIL\include;$(SolutionDir)3rdParty\Exporter;$(SolutionDir)src;$(SolutionDir)example;$(SolutionDir)src\Shader;$(SolutionDir)3rdParty;$(SolutionDir)\3rdParty\glad\include;$(SolutionDir)3rdParty\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;C:\Users\JB\source\repos\game\3rdParty\glew\lib\Release\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;soil.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)3rdParty\SDL2\lib\x64;$(SolutionDir)3rdParty\SDL2_image\lib\x64;C:\Users\JB\source\repos\game\3rdParty\glew\lib\Release\x64;$(SolutionDir)3rdParty\SOIL\lib\x64;$(SolutionDir)3rdParty\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;soil.lib;assimp-vc141-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

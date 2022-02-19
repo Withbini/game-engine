@@ -106,6 +106,14 @@ void Game::ProcessInput()
 		case SDL_KEYDOWN:
 			HandleKeyPress(&event.key);
 			break;
+		case SDL_WINDOWEVENT:
+			if (event.window.event == SDL_WINDOWEVENT_RESIZED)
+			{
+				GetRenderer()->SetScreenWidth(event.window.data1);
+				GetRenderer()->SetScreenHeight(event.window.data2);
+				//glViewport(0,0,event.window.data1, event.window.data2);
+			}
+			break;
 		default:
 			break;
 		}

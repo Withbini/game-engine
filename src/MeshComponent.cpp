@@ -24,28 +24,39 @@ MeshComponent::~MeshComponent()
 
 void MeshComponent::Draw(Shader* shader)
 {
+	shader->SetMat4("world", mOwner->GetWorldTransform());
+	shader->SetFloat("specPower", mMesh->GetSpecPower());
+
 	if (mMesh)
 	{
-		shader->setMat4("world", mOwner->GetWorldTransform());
-		shader->setFloat("specPower", mMesh->GetSpecPower());
+		VertexArray* va = mMesh->GetVertexArray();
+		va->Bind();
+		glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
+	}
+	else if (mModel)
+	{
+		mModel->Draw(shader);
+	}
+}
 
+void MeshComponent::BindTextures(Shader* shader) const
+{
+	if (mMesh)
+	{
 		if (mMesh->mTextures.size() > 1)
 		{
 			for (int i = 0; i < mMesh->mTextures.size(); ++i)
 			{
 				auto t = mMesh->GetTexture(i);
 				if (t) t->Bind(i);
-				auto st= Format::string_format("uTexture%d", i);
-				shader->setInt(st, i);
+				auto st = Format::string_format("uTexture%d", i);
+				shader->SetInt(st, i);
 			}
-			glActiveTexture(GL_TEXTURE0);
 		}
-		else {
+		else
+		{
 			auto t = mMesh->GetTexture(mTextureIdx);
 			if (t) t->Bind();
 		}
-		VertexArray* va = mMesh->GetVertexArray();
-		va->Bind();
-		glDrawElements(GL_TRIANGLES, va->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
 	}
 }

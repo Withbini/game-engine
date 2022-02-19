@@ -6,6 +6,8 @@
 #include "Texture.hpp"
 #include "Common.hpp"
 #include "FrameBuffer.hpp"
+#include "MirrorBuffer.hpp"
+#include "Model.hpp"
 
 using std::string;
 using std::vector;
@@ -46,6 +48,8 @@ public:
 
 	float GetScreenWidth() const { return mScreenWidth; }
 	float GetScreenHeight() const { return mScreenHeight; }
+	void SetScreenWidth(int width) { mScreenWidth=static_cast<float>(width); }
+	void SetScreenHeight(int height) { mScreenHeight=static_cast<float>(height); }
 
 	void UnloadData();
 	void SetUniforms(class Shader* shader,Matrix4& view) const;
@@ -100,7 +104,7 @@ protected:
 	struct ImGuiContext* mImGuiContext;
 
 	//gbuffer
-	class GBuffer* mGBuffer;
+	FrameBufferUPtr mGBuffer;
 	class Shader* mGGlobalShader;
 
 	//TODO : fix bug
@@ -111,5 +115,15 @@ protected:
 
 	//mirror
 	Matrix4 mMirrorView;
-	FrameBufferUPtr mMirrorBuffer;
+    FrameBufferUPtr mMirrorBuffer;
+
+    //ssao
+    FrameBufferUPtr mSsaoBuffer;
+    class Shader* mSsaoShader;
+    TexturePtr mSsaoNoiseTexture;
+    vector<glm::vec3> m_ssaoSamples;
+    float mSsaoRadius { 1.0f };
+	FrameBufferUPtr mBlurBuffer;
+	class Shader* mBlurShader;
+	bool useSsao{ true };
 };

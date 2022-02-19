@@ -3,6 +3,8 @@
 #include <rapidjson/document.h>
 #include <rapidjson/stringbuffer.h>
 
+
+#include "Format.hpp"
 #include "Renderer.hpp"
 #include "VertexArray.hpp"
 #include "Texture.hpp"
@@ -14,11 +16,30 @@ using std::vector;
 using namespace rapidjson;
 namespace
 {
-	union Vertex
+	union Vertexf
 	{
 		float f;
 		uint8_t b[4];
 	};
+}
+
+void Material::Bind(const Shader* shader) const
+{
+	int textureCount = 0;
+	if(diffuse)
+	{
+		shader->SetInt("uTexture0", 0);
+		diffuse->Bind(0);
+		textureCount++;
+	}
+	if(specular)
+	{
+		shader->SetInt("uTexture1", 1);
+		diffuse->Bind(1);
+		textureCount++;
+	}
+	glActiveTexture(GL_TEXTURE0);
+	shader->SetFloat("shineness", shineness);
 }
 
 Mesh::Mesh()
@@ -56,7 +77,7 @@ string Mesh::read(const string& path)
 	return res;
 }
 
-bool Mesh::Load(const std::string& file, Renderer* renderer)
+bool Mesh::Create(const std::string& file, Renderer* renderer)
 {
 	Document document;
 	string jsonFile = read(file);
@@ -87,15 +108,15 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 
 	mSpecPower = static_cast<float>(document["specularPower"].GetDouble());
 
-	vector<Vertex>vertex;
+	vector<Vertexf>vertex;
 	Value& vert = document["vertices"];
 	vertex.reserve(vert.Size() * 8);
 	mRadius = 0.f;
 	for (SizeType i = 0; i < vert.Size(); ++i)
 	{
 		const Value& v = vert[i];
-		Vector3 pos(v[0].GetDouble(), v[1].GetDouble(), v[2].GetDouble());
-		Vertex ver;
+		Vector3 pos(v[0].GetFloat(), v[1].GetFloat(), v[2].GetFloat());
+		Vertexf ver;
 		mRadius = Math::Max(mRadius, pos.LengthSq());
 		for (auto j = 0; j < 8; ++j) //TODO: vertex property can be changed.
 		{
@@ -124,6 +145,14 @@ bool Mesh::Load(const std::string& file, Renderer* renderer)
 	return true;
 }
 
+void Mesh::Draw(const Shader* shader) const
+{
+	mVertexArray->Bind();
+	if (mMaterial)
+		mMaterial->Bind(shader);
+	glDrawElements(GL_TRIANGLES, mVertexArray->GetNumIndices(), GL_UNSIGNED_INT, nullptr);
+}
+
 void Mesh::UnLoad()
 {
 	if (mVertexArray)
@@ -131,6 +160,58 @@ void Mesh::UnLoad()
 		delete mVertexArray;
 		mVertexArray = nullptr;
 	}
+}
+
+void Mesh::CreateBox()
+{
+	std::vector<Vertex> vertices = {
+	Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 0.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec2(0.0f, 1.0f) },
+
+	Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 0.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec2(0.0f, 1.0f) },
+
+	Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+	Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+	Vertex { glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f, -0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f, -0.5f,  0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(-0.5f, -0.5f,  0.5f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+
+	Vertex { glm::vec3(-0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f,  0.5f, -0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 1.0f) },
+	Vertex { glm::vec3(0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(1.0f, 0.0f) },
+	Vertex { glm::vec3(-0.5f,  0.5f,  0.5f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec2(0.0f, 0.0f) },
+	};
+
+	std::vector<uint32_t> indices = {
+	   0,  2,  1,  2,  0,  3,
+	   4,  5,  6,  6,  7,  4,
+	   8,  9, 10, 10, 11,  8,
+	  12, 14, 13, 14, 12, 15,
+	  16, 17, 18, 18, 19, 16,
+	  20, 22, 21, 22, 20, 23,
+	};
+
+	SetVertexArray(new VertexArray(vertices, indices));
+}
+
+void Mesh::SetVertexArray(VertexArray* vertex)
+{
+	if (!mVertexArray) 
+		mVertexArray = vertex;
 }
 
 TexturePtr Mesh::GetTexture(size_t index)

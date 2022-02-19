@@ -19,7 +19,7 @@ bool openglRenderer::LoadShaders()
 	mSpriteShader = new Shader("src/shader/Sprite.vert", "src/shader/Sprite.frag");
 	mSpriteShader->Bind();
 	const Matrix4 viewProj = Matrix4::CreateSimpleViewProj(GetScreenWidth(), GetScreenHeight());
-	mSpriteShader->setMat4("view", viewProj);
+	mSpriteShader->SetMat4("view", viewProj);
 
 	return true;
 }

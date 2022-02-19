@@ -1,38 +1,23 @@
-#include "FrameBuffer.hpp"
+#include "MirrorBuffer.hpp"
 
-FrameBufferUPtr FrameBuffer::Create(const std::vector<TexturePtr>& colorAttachments)
+MirrorBufferUPtr MirrorBuffer::Create(const std::vector<TexturePtr>& colorAttachments)
 {
-    auto buffer = FrameBufferUPtr(new FrameBuffer);
+    auto buffer = MirrorBufferUPtr(new MirrorBuffer);
     if(buffer->Init(colorAttachments))
         return std::move(buffer);
     return nullptr;
 }
 
-void FrameBuffer::BindTextures() const
-{
-    for(auto i = 0; i < mColorAttachments.size(); ++i)
-    {
-        mColorAttachments[i]->Bind(i);
-    }
-    //glActiveTexture(GL_TEXTURE0);
-}
-
-void FrameBuffer::ReadBuffer() const
-{
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, frameBufferID);
-	debug("readbuffer");
-}
-
-bool FrameBuffer::Init(const std::vector<TexturePtr>& colorAttachments)
+bool MirrorBuffer::Init(const std::vector<TexturePtr>& colorAttachments)
 {
     mColorAttachments = colorAttachments;
-    glGenFramebuffers(1, &frameBufferID);
-    glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID);
+    glGenFramebuffers(1, &mFrameBufferID);
+    glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferID);
 
     unsigned int depth;
     glGenRenderbuffers(1, &depth);
     glBindRenderbuffer(GL_RENDERBUFFER, depth);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, colorAttachments[0]->GetWidth(), colorAttachments[0]->GetHeight());
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, colorAttachments[0]->GetWidth(), colorAttachments[0]->GetHeight());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
 
     vector<GLenum> drawBuffers;
@@ -53,10 +38,10 @@ bool FrameBuffer::Init(const std::vector<TexturePtr>& colorAttachments)
     return true;
 }
 
-FrameBuffer::~FrameBuffer()
+MirrorBuffer::~MirrorBuffer()
 {
-    if(frameBufferID != 0)
+    if(mFrameBufferID != 0)
     {
-        glDeleteFramebuffers(1, &frameBufferID);
+        glDeleteFramebuffers(1, &mFrameBufferID);
     }
 }

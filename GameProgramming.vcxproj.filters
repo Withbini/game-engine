@@ -197,6 +197,12 @@
     <ClCompile Include="src\FrameBuffer.cpp">
       <Filter>소스 파일\Core</Filter>
     </ClCompile>
+    <ClCompile Include="src\MirrorBuffer.cpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Model.cpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="example\Ship.hpp">
@@ -358,6 +364,12 @@
     <ClInclude Include="src\Format.hpp">
       <Filter>소스 파일\Util</Filter>
     </ClInclude>
+    <ClInclude Include="src\MirrorBuffer.hpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Model.hpp">
+      <Filter>소스 파일\Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\shader\Sprite.frag">
@@ -391,6 +403,18 @@
       <Filter>Shader</Filter>
     </None>
     <None Include="src\shader\GBufferPointLight.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\SSAO.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\SSAO.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\blur5x5.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\blur5x5.vert">
       <Filter>Shader</Filter>
     </None>
   </ItemGroup>

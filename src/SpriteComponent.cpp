@@ -26,7 +26,7 @@ void SpriteComponent::Draw(Shader* shader)
 	{
 		Matrix4 scaleMat = Matrix4::CreateScale(static_cast<float>(mTextureWidth),static_cast<float>(mTextureHeight),1.0f);
 		Matrix4 worldMat = scaleMat * mOwner->GetWorldTransform();
-		shader->setMat4("world", worldMat);
+		shader->SetMat4("world", worldMat);
 		mTexture->Bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 	}

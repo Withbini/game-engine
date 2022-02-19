@@ -8,6 +8,7 @@
 #include <SDL.h>
 #include "Math.hpp"
 
+#include "Common.hpp"
 class Shader
 {
 public:
@@ -102,14 +103,16 @@ public:
 	void setBool(const std::string &name, bool value) const
 	{
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
+		debug("bool");
 	}
 
-	void setInt(const std::string &name, int value) const
+	void SetInt(const std::string &name, int value) const
 	{
 		glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
+		debug("int");
 	}
 
-	void setFloat(const std::string &name, float value) const
+	void SetFloat(const std::string &name, float value) const
 	{
 		glUniform1f(glGetUniformLocation(ID, name.c_str()), value);
 	}
@@ -121,19 +124,23 @@ public:
 	void setVec2(const std::string &name, float x, float y) const
 	{
 		glUniform2f(glGetUniformLocation(ID, name.c_str()), x, y);
+		debug("vec2");
 	}
 
 	void setVec3(const std::string &name, const glm::vec3 &value) const
 	{
 		glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
+		debug("vec3");
 	}
 	void setVec3(const std::string &name, float x, float y, float z) const
 	{
 		glUniform3f(glGetUniformLocation(ID, name.c_str()), x, y, z);
+		debug("vec3 by float3");
 	}
 	void setVec3(const std::string &name, const Vector3 &value) const
 	{
 		glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, value.GetAsFloatPtr());
+		debug("vec3 by Vector3");
 	}
 
 	/*void setVec4(const std::string &name, const glm::vec4 &value) const
@@ -143,6 +150,7 @@ public:
 	void setVec4(const std::string &name, float x, float y, float z, float w) const
 	{
 		glUniform4f(glGetUniformLocation(ID, name.c_str()), x, y, z, w);
+		debug("vec4");
 	}
 
 	/*void setMat2(const std::string &name, const glm::mat2 &mat) const
@@ -155,14 +163,15 @@ public:
 		glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}
 
-	void setMat4(const std::string &name, const glm::mat4 &mat) const
+	void SetMat4(const std::string &name, const glm::mat4 &mat) const
 	{
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 	}*/
 
-	void setMat4(const std::string &name, const Matrix4 &mat) const
+	void SetMat4(const std::string &name, const Matrix4 &mat) const
 	{
 		glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_TRUE, mat.GetAsFloatPtr());
+		debug("mat4");
 	}
 
 private:

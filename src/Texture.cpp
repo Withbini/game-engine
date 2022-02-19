@@ -16,7 +16,7 @@ Texture::~Texture()
 		glDeleteTextures(1, &mTextureID);
 }
 
-TexturePtr Texture::CreateFromImage(const class Image* image)
+TexturePtr Texture::CreateFromImage(const class Image* image) //TODO: change to unique pointer
 {
 	auto texture = TexturePtr(new Texture);
 	texture->CreateTexture();
@@ -57,23 +57,26 @@ void Texture::SetWrap(uint32_t sWrap, uint32_t tWrap) const {
 void Texture::Bind(int index) const
 {
 	glActiveTexture(GL_TEXTURE0 + index);
+	debug("active");
 	glBindTexture(GL_TEXTURE_2D, mTextureID);
+	debug("bind texture");
 }
 
 void Texture::SetTextureFromImage(const Image* image) {
 	GLenum format = GL_RGBA;
 	switch (image->GetChannel()) {
-		case 1: format = GL_RED; break;
-		case 2: format = GL_RG; break;
-		case 3: format = GL_RGB; break;
+	case 1: format = GL_RED; debug("channel 1"); break;
+		case 2: format = GL_RG; debug("channel 2"); break;
+		case 3: format = GL_RGB; debug("channel 3"); break;
 		default: break;
 	}
 	mWidth = image->GetWidth();
 	mHeight = image->GetHeight();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, format, GL_UNSIGNED_BYTE, image->GetData());
+	mFormat = format;
+	mType = GL_UNSIGNED_BYTE;
+	glTexImage2D(GL_TEXTURE_2D, 0, mFormat, image->GetWidth(), image->GetHeight(), 0, format, mType, image->GetData());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
-	
 	if(GLAD_GL_EXT_texture_filter_anisotropic)
 	{
 		GLfloat largest;
@@ -91,11 +94,21 @@ void Texture::SetTextureFormat(int width, int height, uint32_t format, uint32_t 
 
 	GLenum imageFormat = GL_RGBA;
 	if (mFormat == GL_DEPTH_COMPONENT)
+	{
 		imageFormat = GL_DEPTH_COMPONENT;
+	}
 	else if (mFormat == GL_RGB ||
 		mFormat == GL_RGB16F ||
 		mFormat == GL_RGB32F)
+	{
 		imageFormat = GL_RGB;
+	}
+	else if (mFormat == GL_RED ||
+		mFormat == GL_R16F ||
+		mFormat == GL_R32F)
+	{
+		imageFormat = GL_RED;
+	}
 
 	glTexImage2D(GL_TEXTURE_2D, 0, format, mWidth, mHeight, 0, imageFormat, type, nullptr);
 }

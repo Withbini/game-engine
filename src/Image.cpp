@@ -14,7 +14,7 @@ ImageUPtr Image::Load(const std::string& file)
 	auto image = ImageUPtr(new Image);
 	if(!image->LoadWithSOIL(file))
 	{
-		SDL_Log("SOIL failed to load image %s: ", SOIL_last_result());
+		SDL_Log("SOIL failed to load image %s: %s", SOIL_last_result(), file.c_str());
 		return nullptr;
 	}
 	return std::move(image);

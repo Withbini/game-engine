@@ -30,6 +30,31 @@ VertexArray::VertexArray(const void* verts, unsigned int numVerts,
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
+VertexArray::VertexArray(const std::vector<Vertex>& verts, const std::vector<uint32_t>& indices)
+{
+	glGenVertexArrays(1, &mVertexArray);
+	glBindVertexArray(mVertexArray);
+
+	glGenBuffers(1, &mVertexBuffer);
+	glGenBuffers(1, &mIndexBuffer);
+
+	mNumVerts = verts.size();
+	mNumIndices = indices.size();
+
+	glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mNumVerts * sizeof(Vertex), verts.data(), GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mNumIndices * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, normal)));
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<const void*>(offsetof(Vertex, texCoord)));
+}
+
 VertexArray::~VertexArray()
 {
 	glDeleteBuffers(1, &mVertexBuffer);
