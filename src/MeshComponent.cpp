@@ -33,14 +33,15 @@ void MeshComponent::Draw(Shader* shader)
 		{
 			for (int i = 0; i < mMesh->mTextures.size(); ++i)
 			{
-				auto t = mMesh->GetTexture(i);
-				if (t) t->Bind(i);
 				auto st= Format::string_format("uTexture%d", i);
 				shader->setInt(st, i);
+				auto t = mMesh->GetTexture(i);
+				if (t) t->Bind(i);
 			}
-			glActiveTexture(GL_TEXTURE0);
 		}
-		else {
+		else
+		{
+			shader->setInt("uTexture0", 0);
 			auto t = mMesh->GetTexture(mTextureIdx);
 			if (t) t->Bind();
 		}

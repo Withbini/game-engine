@@ -124,15 +124,19 @@
     <ClInclude Include="src\VertexArray.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Simple.vert" />
     <None Include="src\shader\Basic.frag" />
     <None Include="src\shader\Basic.vert" />
     <None Include="src\shader\BlinPhong.frag" />
+    <None Include="src\shader\Depth.frag" />
+    <None Include="src\shader\Depth.vert" />
     <None Include="src\shader\GBuffer.frag" />
     <None Include="src\shader\GBufferGlobal.frag" />
     <None Include="src\shader\GBufferGlobal.vert" />
     <None Include="src\shader\GBufferPointLight.frag" />
     <None Include="src\shader\Phong.frag" />
     <None Include="src\shader\Phong.vert" />
+    <None Include="src\shader\Simple.frag" />
     <None Include="src\shader\Sprite.frag" />
     <None Include="src\shader\Sprite.vert" />
   </ItemGroup>

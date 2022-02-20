@@ -117,11 +117,11 @@ void GL3DGame::LoadData()
 		a->SetRotation(q);
 	}
 
-	mRenderer->SetAmbientLight(Vector3(0.2f, 0.2f, 0.2f));
+	mRenderer->SetAmbientLight(Vector3(0.5f, 0.5f, 0.5f));
 	DirectionalLight& dir = mRenderer->GetDirectionalLight();
-	dir.mDirection = glm::vec3(0.0f, -0.707f, -0.707f);
-	dir.mDiffuseColor = glm::vec3(0.78f, 0.88f, 1.0f);
-	dir.mSpecColor = glm::vec3(0.1f, 0.1f, 0.1f);
+	dir.direction = Vector3(-0.5f, -1.5f, -1.0f);
+	dir.diffuseColor = Vector3(1.f, 0.88f, 1.0f);
+	dir.specColor = Vector3(0.1f, 0.8f, 0.1f);
 
 	// Camera actor
 	mFPSActor = new FPSActor(this);

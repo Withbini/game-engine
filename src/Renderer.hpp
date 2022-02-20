@@ -11,9 +11,10 @@ using std::string;
 using std::vector;
 //phong shader
 struct DirectionalLight {
-	glm::vec3 mDirection;
-	glm::vec3 mDiffuseColor;
-	glm::vec3 mSpecColor;
+	Vector3 position { Vector3(2.0f, 4.0f, 100.0f) };
+	Vector3 direction;
+	Vector3 diffuseColor;
+	Vector3 specColor;
 };
 
 struct PointLight {
@@ -49,6 +50,7 @@ public:
 
 	void UnloadData();
 	void SetUniforms(class Shader* shader,Matrix4& view) const;
+	void SetUniforms(class Shader* shader,glm::mat4& view) const;
 
 	Matrix4 GetViewMatrix() const {return mViewMatrix;}
 	void SetViewMatrix(const Matrix4& mat) { mViewMatrix = mat; }
@@ -112,4 +114,10 @@ protected:
 	//mirror
 	Matrix4 mMirrorView;
 	FrameBufferUPtr mMirrorBuffer;
+
+	//depth
+	//unsigned int mDepthBuffer;
+	FrameBufferUPtr mDepthBuffer;
+	//TexturePtr mShadowMap;
+	class Shader* depthShader;
 };

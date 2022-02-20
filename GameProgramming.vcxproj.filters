@@ -393,6 +393,18 @@
     <None Include="src\shader\GBufferPointLight.frag">
       <Filter>Shader</Filter>
     </None>
+    <None Include="src\shader\Simple.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="Simple.vert">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Depth.frag">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="src\shader\Depth.vert">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Text Include="imgui\LICENSE.txt">

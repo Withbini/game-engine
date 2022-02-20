@@ -88,7 +88,8 @@ bool Renderer::Initialize(float width, float height)
 
 	mPointLightMesh = GetMesh("Assets/PointLight.gpmesh");
 
-	mMirrorBuffer = FrameBuffer::Create(static_cast<int>(width), static_cast<int>(height), GL_RGB, GL_FLOAT);
+	mMirrorBuffer = FrameBuffer::Create(static_cast<int>(width/4.f), static_cast<int>(height/4.f), GL_RGB, GL_FLOAT);
+	mDepthBuffer = FrameBuffer::Create(1024, 1024, GL_DEPTH_COMPONENT, GL_FLOAT);
 	return true;
 }
 
@@ -133,30 +134,88 @@ void Renderer::SetUniforms(Shader* shader, Matrix4& view) const
 	shader->setVec3("cameraPos", invView.GetTranslation());
 	shader->setFloat("specPower", mSpecPower);
 
-	shader->setVec3("dirLight.direction", mDirLight.mDirection);
-	shader->setVec3("dirLight.diffuseColor", mDirLight.mDiffuseColor);
-	shader->setVec3("dirLight.specColor", mDirLight.mSpecColor);
+	shader->setVec3("dirLight.direction", mDirLight.direction);
+	shader->setVec3("dirLight.diffuseColor", mDirLight.diffuseColor);
+	shader->setVec3("dirLight.specColor", mDirLight.specColor);
 }
 
 void Renderer::Draw()
 {
-	DrawScene(mMirrorBuffer->GetFrameBufferID(), mMirrorView, mProjMatrix, 1.f);
-	DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix, 1.f);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	DrawFromGBuffer();
+	//DrawScene(mMirrorBuffer->GetFrameBufferID(), mMirrorView, mProjMatrix, 0.25f);
+	const auto lightView = Matrix4::CreateLookAt(mDirLight.position, mDirLight.position + mDirLight.direction, Vector3(0.f, 0.f, 1.f));
+	const auto lightProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), 1024, 1024, 10.0f, 10000.f);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, mDepthBuffer->GetFrameBufferID());
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glViewport(0, 0, mDepthBuffer->GetTexture()->GetWidth(), mDepthBuffer->GetTexture()->GetHeight());
+	mMeshShader->Bind();
+	//mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
+	mMeshShader->setMat4("viewProj", lightView*lightProjMatrix);
+	for (auto comp : mMeshComps)
+	{
+		if (comp->GetVisible())
+			comp->Draw(mMeshShader);
+	}
 
-	glDisable(GL_DEPTH_TEST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, static_cast<int>(mScreenWidth), static_cast<int>(mScreenHeight));
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glDepthMask(GL_TRUE);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	depthShader->Bind();
+	depthShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
+	depthShader->setMat4("lightTransform", lightView*lightProjMatrix);
+	//depthShader->setMat4("lightTransform", mViewMatrix*mProjMatrix);
+	SetUniforms(depthShader, mViewMatrix);
+	depthShader->setInt("shadowMap", 2);
+	mDepthBuffer->GetTexture()->Bind(2);
+	for (auto comp : mMeshComps)
+	{
+		if (comp->GetVisible())
+			comp->Draw(depthShader);
+	}
+
+	//for debug
+	{
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glViewport(0, 0, static_cast<int>(mScreenWidth), static_cast<int>(mScreenHeight));
+
+		//glClearColor(0.f, 0.f, 0.f, 1.f);
+		////glDepthMask(GL_TRUE);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		//glEnable(GL_DEPTH_TEST);
+		//glDisable(GL_BLEND);
+		//mMeshShader->Bind();
+		////mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
+		//mMeshShader->setMat4("viewProj", mViewMatrix*mProjMatrix);
+		//SetUniforms(mMeshShader, mViewMatrix);
+		//for (auto comp : mMeshComps)
+		//{
+		//	if (comp->GetVisible())
+		//		comp->Draw(mMeshShader);
+		//}
+	}
+	//DrawScene(0, mViewMatrix, mProjMatrix, 1.f);
+	//DrawScene(mGBuffer->GetBufferID(), mViewMatrix, mProjMatrix, 1.f);
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//DrawFromGBuffer();
+
+	/*glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);*/
 
-	mSpriteShader->Bind();
+	/*mSpriteShader->Bind();
 	mSpriteVerts->Bind();
 	for (auto comp : mSprites)
 	{
 		if (comp->GetVisible())
 			comp->Draw(mSpriteShader);
-	}
+	}*/
 	//explicit imgui new frame
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
@@ -166,7 +225,7 @@ void Renderer::Draw()
 			"diffuse", "normal", "position", "specular"
 		};
 		static int bufferSelect = 0;
-		ImGui::Combo("buffer", &bufferSelect, bufferNames, sizeof(bufferNames)/sizeof(const char*));
+		ImGui::Combo("buffer", &bufferSelect, bufferNames, sizeof(bufferNames) / sizeof(const char*));
 
 		const float width = ImGui::GetContentRegionAvail().x;
 		const float height = width * (mScreenHeight / mScreenWidth);
@@ -176,8 +235,11 @@ void Renderer::Draw()
 	ImGui::End();
 	if (ImGui::Begin("directional light"))
 	{
-		ImGui::DragFloat3("position", glm::value_ptr(mDirLight.mDirection),0.1f,-200,200);
-		ImGui::ColorEdit3("color", glm::value_ptr(mDirLight.mDiffuseColor));
+		ImGui::DragFloat3("position", &mDirLight.position.x, 0.1f, -2000, 2000);
+		ImGui::DragFloat3("direction", &mDirLight.direction.x, 0.1f, -200, 200);
+		ImGui::ColorEdit3("diffuseColor", &mDirLight.diffuseColor.x);
+		ImGui::ColorEdit3("specularColor", &mDirLight.specColor.x);
+		ImGui::ColorEdit3("ambient", &mAmbient.x);
 	}
 	ImGui::End();
 	if (ImGui::Begin("mirror"))
@@ -185,6 +247,14 @@ void Renderer::Draw()
 		const float width = ImGui::GetContentRegionAvail().x;
 		const float height = width * (mScreenHeight / mScreenWidth);
 		ImGui::Image(reinterpret_cast<ImTextureID>(mMirrorBuffer->GetTexture()->GetTextureID()),
+			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
+	}
+	ImGui::End();
+	if (ImGui::Begin("depth"))
+	{
+		const float width = ImGui::GetContentRegionAvail().x;
+		const float height = width * (mScreenHeight / mScreenWidth);
+		ImGui::Image(reinterpret_cast<ImTextureID>(mDepthBuffer->GetTexture()->GetTextureID()),
 			ImVec2(width, height), ImVec2(0, 1), ImVec2(1, 0));
 	}
 	ImGui::End();
@@ -207,7 +277,7 @@ void Renderer::DrawScene(unsigned framebuffer, const Matrix4& view, const Matrix
 	glDisable(GL_BLEND);
 	mMeshShader->Bind();
 	mMeshShader->setMat4("viewProj", view*proj);
-
+	SetUniforms(mMeshShader, mViewMatrix);
 	for (auto comp : mMeshComps)
 	{
 		if (comp->GetVisible())
@@ -239,8 +309,11 @@ bool Renderer::LoadShaders()
 	const Matrix4 viewProj = Matrix4::CreateSimpleViewProj(mScreenWidth, mScreenHeight);
 	mSpriteShader->setMat4("viewProj", viewProj);
 
-	mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/GBuffer.frag");
-	//mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/BlinPhong.frag");
+	//mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/GBuffer.frag");
+	//mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/BlinnPhong.frag");
+	//mMeshShader = new Shader("src/Shader/Basic.vert", "src/Shader/Simple.frag");
+	//mMeshShader = new Shader("src/Shader/Simple.vert", "src/Shader/BlinnPhong.frag");
+	mMeshShader = new Shader("src/Shader/Phong.vert", "src/Shader/Phong.frag");
 	mMeshShader->Bind();
 	mViewMatrix = Matrix4::CreateLookAt(Vector3::Zero, Vector3::UnitX, Vector3::UnitZ);
 	mProjMatrix = Matrix4::CreatePerspectiveFOV(Math::ToRadians(70.f), mScreenWidth, mScreenHeight, 10.0f, 10000.f);
@@ -263,6 +336,8 @@ bool Renderer::LoadShaders()
 	mGPointLightShader->setInt("gPosition", 2);
 	mGGlobalShader->setInt("gSpecular", 3);
 	mGPointLightShader->setVec2("screenDimensions", mScreenWidth, mScreenHeight);
+
+	depthShader = new Shader("src/Shader/Depth.vert", "src/Shader/Depth.frag");
 	return true;
 }
 
@@ -280,10 +355,10 @@ void Renderer::DrawFromGBuffer()
 	glBindBuffer(GL_READ_FRAMEBUFFER, mGBuffer->GetBufferID());
 	const int width = static_cast<int>(mScreenWidth);
 	const int height = static_cast<int>(mScreenHeight);
-	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST); //frame buffer의 depth buffer를 기본버퍼로 가져옴.
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
-	glEnable(GL_DEPTH_TEST); //depth test 사용하지만
-	glDepthMask(GL_FALSE); //depth buffer에 쓰지는 않을거야
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE);
 
 	mGPointLightShader->Bind();
 	mPointLightMesh->GetVertexArray()->Bind();

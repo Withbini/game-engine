@@ -70,7 +70,8 @@ void Texture::SetTextureFromImage(const Image* image) {
 	}
 	mWidth = image->GetWidth();
 	mHeight = image->GetHeight();
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, format, GL_UNSIGNED_BYTE, image->GetData());
+	mType = GL_UNSIGNED_BYTE;
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->GetWidth(), image->GetHeight(), 0, format, mType, image->GetData());
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	

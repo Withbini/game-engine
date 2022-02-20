@@ -21,7 +21,7 @@ void FPSActor::UpdateActor(float deltaTime)
 {
 	Actor::UpdateActor(deltaTime);
 
-	const Vector3 modelPosOffset(10.f, 25.f, -10.f);
+	const Vector3 modelPosOffset(10.f, 10.f, -10.f);
 	Vector3 modelPos = GetPosition();
 	modelPos += GetForward() * modelPosOffset.x;
 	modelPos += GetRight() * modelPosOffset.y;

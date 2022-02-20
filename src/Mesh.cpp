@@ -139,5 +139,6 @@ TexturePtr Mesh::GetTexture(size_t index)
 	{
 		return mTextures[index];
 	}
+	SDL_Log("Failed to get texture %d", index);
 	return nullptr;
 }
